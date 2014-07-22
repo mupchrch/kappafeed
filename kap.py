@@ -1,12 +1,14 @@
 import socket
 import re
+import threading
 
 serverAddress = "irc.twitch.tv"
 portNumber = 6667
 nickname = "mupchrch"
 realName = "mupchrch"
 password = "oauth:d1ebu8gjs0aa0f49stppqxs7uqgeph7"
-channelName = "#mupbot"
+#these will be the top n streams using twitch api at some point:
+channelNames = ["#phreakstream", "#trick2g", "#kneecoleslaw", "#rflegendary"]
 emote = r'Kappa'
 
 def parsemsg(s):
@@ -31,7 +33,29 @@ def emotefilter(s, filt):
 	"""Finds messages with the specified emote regex in them
 	"""
 	return filt.search(s)
+'''
+class TwitchChannelListener(threading.Thread):
+	def __init__(self, ircSocket, channelName):
+		threading.Thread.__init__(self)
+		self.ircSocket = ircSocket
+		self.channelName = channelName
+	def run(self):
+		ircSocket.send('JOIN %s\r\n' % self.channelName)
 
+		print 'Starting channel %s' % self.channelName
+
+		while True:
+			data = ircSocket.recv(4096) #Make Data the Receive Buffer
+			prefix, command, args = parsemsg(data)
+			if command == 'PRIVMSG':
+				twitchUser = prefix[:prefix.find('!')]
+				twitchMsg = args[1].rstrip('\r\n')
+
+				filt = re.compile(r'(^|\s|\W)' + emote + r'($|\s|\W)')
+				if emotefilter(twitchMsg, filt):
+					#We didn't find a 'Kappa' Kappa
+					print ('%s: %s' % (twitchUser, twitchMsg))
+'''
 def main():
 	irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	irc.connect((serverAddress, portNumber))
@@ -39,27 +63,24 @@ def main():
 	irc.send('PASS %s\r\n' % password)
 	irc.send('NICK %s\r\n' % nickname)
 	irc.send('USER %s %s %s :%s\r\n' % (nickname, serverAddress, nickname, realName))
-	irc.send('JOIN %s\r\n' % channelName)
-
-	print 'Starting.'
+	
+	for channel in channelNames:
+		irc.send('JOIN %s\r\n' % channel)
+		print 'Channel %s started.' % channel
 
 	while True:
 		data = irc.recv(4096) #Make Data the Receive Buffer
 		prefix, command, args = parsemsg(data)
+
 		if command == 'PRIVMSG':
 			twitchUser = prefix[:prefix.find('!')]
+			twitchChannel = args[0]
 			twitchMsg = args[1].rstrip('\r\n')
-
-			if twitchMsg == 'leave':
-				print 'Ending.'
-				break
 
 			filt = re.compile(r'(^|\s|\W)' + emote + r'($|\s|\W)')
 			if emotefilter(twitchMsg, filt):
 				#We didn't find a 'Kappa' Kappa
-				print "~~~EMOTE BELOW~~~"
-
-			print ('%s: %s' % (twitchUser, twitchMsg))
+				print ('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
 
 if  __name__ =='__main__':
     main()
