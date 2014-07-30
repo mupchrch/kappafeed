@@ -30,6 +30,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         for this example i will just print message to console
         """
         print "Client %s received a message : %s" % (self.id, message)
+        self.write_message(u"You said: " + message)
         
     def on_close(self):
         if self.id in clients:
@@ -41,7 +42,7 @@ settings = {
 
 app = tornado.web.Application([
     (r'/', IndexHandler),
-    (r'/', WebSocketHandler),
+    (r'/websock/', WebSocketHandler),
     (r"/(kappa\.js)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
 ])
 
