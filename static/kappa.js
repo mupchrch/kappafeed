@@ -1,20 +1,38 @@
-function WebSocketTest() {
-    var messageContainer = $('#messages');
+$(function() {
+    var chat = $('.chat'),
+    printer = $('.messages', chat),
+    printerH = printer.innerHeight(),
+    preventNewScroll = false;
+
+    function scrollBottom(){
+        if(!preventNewScroll){
+            printer.stop().animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600);
+        }
+    }
+
+    scrollBottom();
+
+    printer.hover(function( e ) {
+        preventNewScroll = e.type=='mouseenter' ? true : false ;
+        if(!preventNewScroll){ scrollBottom(); }
+    });
 
     if ("WebSocket" in window) {
-		messageContainer.text("WebSocket is supported by your Browser!");
-        var ws = new WebSocket("ws://localhost:8888/websock/?Id=123456789");
+        var ws = new WebSocket("ws://localhost:8888/feed/");
         ws.onopen = function() {
-            ws.send("Message from client");
+            printer.append('Connection open.');
+            scrollBottom();
         };
         ws.onmessage = function (evt) { 
             var received_msg = evt.data;
-            messageContainer.text("Message from server: " + received_msg);
+            printer.append('<div>' + received_msg + '</div>');
+            scrollBottom();
         };
         ws.onclose = function() { 
-            messageContainer.text("Connection is closed...");
+            printer.append('Connection closed.');
+            scrollBottom();
         };
     } else {
-        messageContainer.text("WebSocket NOT supported by your Browser!");
+        alert('websocket not supported');
     }
-}
+});
