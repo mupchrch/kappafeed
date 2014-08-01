@@ -7,16 +7,13 @@ from tornado.options import define, options, parse_command_line
 
 define("port", default=8888, help="run on the given port", type=int)
 
-# we gonna store clients in dictionary..
+#list of connected clients
 clients = []
 
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        #self.write("This is your response")
         self.render("index.html")
-        #we don't need self.finish() because self.render() is fallowed by self.finish() inside tornado
-        #self.finish()
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
