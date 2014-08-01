@@ -1,0 +1,23 @@
+.chat{
+  font-family:Helvetica, Arial, sans-serif;
+  position:relative;
+  margin:0 auto;
+  width:600px;
+  color:#777;
+  border-radius:10px;
+  border:1px solid #aaa;
+  overflow:hidden;
+}
+.chat .messages{
+  background:#eee;
+  overflow:hidden;
+  width:100%;
+  height:300px;
+}
+.chat .messages:hover{
+  overflow-y:scroll;
+}
+.chat .messages > div{
+  padding:15px;
+  border-bottom:1px dashed #999;
+}
