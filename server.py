@@ -35,3 +35,22 @@ def sendToClients(message):
          clients.remove(client)
       else:
          client.write_message(message)
+
+settings = {
+   "static_path": os.path.join(os.path.dirname(__file__), "static"),
+   "website_path": os.path.join(os.path.dirname(__file__), "website"),
+}
+
+app = tornado.web.Application([
+   (r'/', IndexHandler),
+   (r'/index', IndexHandler),
+   (r'/feed', WebSocketHandler),
+],**settings)
+
+def startServer():
+   parse_command_line()
+   app.listen(options.port)
+   tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == "__main__":
+   startServer()
