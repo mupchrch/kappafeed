@@ -3,14 +3,16 @@ import re
 import server
 import urllib2
 import json
+import time
 
 serverAddress = "irc.twitch.tv"
 portNumber = 80
 nickname = "mupchrch"
 realName = "mupchrch"
 password = "oauth:d1ebu8gjs0aa0f49stppqxs7uqgeph7"
-#these will be the top n streams using twitch api at some point:
+#these will be the top 25 streams using twitch api at some point:
 channelNames = []
+numChannelsToJoin = 25
 emote = r'Kappa'
 
 def parsemsg(s):
@@ -39,11 +41,15 @@ def getTopStreams():
    rawjson = urllib2.urlopen('https://api.twitch.tv/kraken/streams')
    twitchJson = json.load(rawjson)
 
-   for twitchStream in twitchJson['streams']:
-      #channelName = twitchjson['streams'][0]['channel']['name']
-      channelNames.append('#' + twitchStream['channel']['name'])
+   numChan = 0
 
-def startKappaFeed():
+   for twitchStream in twitchJson['streams']:
+      if numChan == numChannelsToJoin:
+         break
+      channelNames.append('#' + twitchStream['channel']['name'])
+      numChan += 1
+
+def chatConnect():
    getTopStreams()
 
    irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,25 +58,48 @@ def startKappaFeed():
    irc.send('PASS %s\r\n' % password)
    irc.send('NICK %s\r\n' % nickname)
    irc.send('USER %s %s %s :%s\r\n' % (nickname, serverAddress, nickname, realName))
+   return irc
 
+def channelScan(irc):
    for channel in channelNames:
       irc.send('JOIN %s\r\n' % channel)
+      channelStartTime = time.time()
+      while True:
+         da = irc.recv(512)
+         pre, com, ar = parsemsg(da)
+         if com == 'JOIN':
+            if ar[0] == channel:
+               break
+         if time.time() - channelStartTime >= 3:
+            irc.send('JOIN %s\r\n' % channel)
       print 'Channel %s started.' % channel
+
+   kappaStartTime = time.time()
 
    while True:
       try:
-         data = irc.recv(4096) #Make Data the Receive Buffer
-         prefix, command, args = parsemsg(data)
+         data = irc.recv(512) #Make Data the Receive Buffer
 
-         if command == 'PRIVMSG':
-            twitchUser = prefix[:prefix.find('!')]
-            twitchChannel = args[0]
-            twitchMsg = args[1].rstrip('\r\n')
+         if data:
+            prefix, command, args = parsemsg(data)
+            if command == 'PRIVMSG':
+               twitchUser = prefix[:prefix.find('!')]
+               twitchChannel = args[0]
+               twitchMsg = args[1].rstrip('\r\n')
 
-            filt = re.compile(r'(^|\s|\W)' + emote + r'($|\s|\W)')
-            if emotefilter(twitchMsg, filt):
-               #We didn't find a 'Kappa' Kappa
-               server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
-               print ('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+               if 'PRIVMSG' not in twitchMsg:
+                  filt = re.compile(r'(^|\s|\W)' + emote + r'($|\s|\W)')
+                  if emotefilter(twitchMsg, filt):
+                     #We didn't find a 'Kappa' Kappa
+                     server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+                     #print('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+         if time.time() - kappaStartTime >= 3600:
+            break
       except:
-         print "ERR"
+         pass
+
+def startKappaFeed():
+   irc = chatConnect()
+   while True:
+      channelScan(irc)
+      channelNames = []
