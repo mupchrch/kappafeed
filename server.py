@@ -10,6 +10,9 @@ define("port", default=80, help="run on the given port", type=int)
 # we gonna store clients in dictionary..
 clients = []
 
+def logToConsole(s):
+   print '{serv} ' + s
+
 class IndexHandler(tornado.web.RequestHandler):
    @tornado.web.asynchronous
    def get(self):
@@ -22,7 +25,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
       self.write_message(u"Welcome to KappaFeed!")
 
    def on_message(self, message):
-      print "~SERVER~ Received a message : %s" % (message)
+      logToConsole("Received a message : %s" % message)
       self.write_message(u"You said: " + message)
 
    def on_close(self):
@@ -31,7 +34,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 def sendToClients(message):
    for client in clients:
       if not client.ws_connection.stream.socket:
-         print "~SERVER~ client left"
+         logToConsole("Client left.")
          clients.remove(client)
       else:
          client.write_message(message)
