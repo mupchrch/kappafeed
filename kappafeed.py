@@ -4,6 +4,7 @@ import server
 import urllib2
 import json
 import time
+import sys
 
 serverAddress = "irc.twitch.tv"
 portNumber = 80
@@ -31,12 +32,11 @@ def parseMessage(s):
    else:
       args = s.split()
    if len(args) == 0:
-      logToConsole('No command in IRC message.')
+      logToConsole('No command in IRC message: %s.' % s)
       command = 'UNKNOWN'
    else:
       command = args.pop(0)
    return prefix, command, args
-
 
 def emoteFilter(s, filt):
    #Finds messages with the specified emote regex in them
@@ -44,6 +44,7 @@ def emoteFilter(s, filt):
 
 def logToConsole(s):
    print '{kf} ' + s
+   sys.stdout.flush()
 
 def getTopStreams():
    logToConsole('Getting top streams...')
@@ -111,9 +112,14 @@ def channelScan(irc):
                      #We didn't find a 'Kappa' Kappa
                      server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
                      #print('{kf}%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+            elif command == 'PING':
+               logToConsole('Received PING.')
+               logToConsole('Sending PONG...')
+               irc.send('PONG :tmi.twitch.tv\r\n')
          if time.time() - kappaStartTime >= 3600:
             break
       except:
+         logToConsole('Error in channelScan.')
          pass
 
 def partChannels(irc, channels):
