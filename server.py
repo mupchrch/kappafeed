@@ -20,6 +20,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
    def open(self):
+      logToConsole('Client connected.')
       clients.append(self)
       self.stream.set_nodelay(True)
       self.write_message(u"Welcome to KappaFeed!")
@@ -29,6 +30,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
       self.write_message(u"You said: " + message)
 
    def on_close(self):
+      logToConsole('Client left.')
       clients.remove(self)
 
 def sendToClients(message):
@@ -51,6 +53,7 @@ app = tornado.web.Application([
 ],**settings)
 
 def startServer():
+   logToConsole('Starting server...')
    parse_command_line()
    app.listen(options.port)
    tornado.ioloop.IOLoop.instance().start()
