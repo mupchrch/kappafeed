@@ -30,8 +30,13 @@ def parseMessage(s):
       args.append(trailing)
    else:
       args = s.split()
-   command = args.pop(0)
+   if len(args) == 0:
+      logToConsole('No command in IRC message.')
+      command = 'UNKNOWN'
+   else:
+      command = args.pop(0)
    return prefix, command, args
+
 
 def emoteFilter(s, filt):
    #Finds messages with the specified emote regex in them
