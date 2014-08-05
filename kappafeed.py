@@ -111,9 +111,10 @@ def channelScan(irc):
       except:
          pass
 
-def partChannels(irc):
+def partChannels(irc, channels):
    logToConsole('Parting channels...')
-   for channel in channelNames:
+   channelCount = 0
+   for channel in channels:
       irc.send('PART %s\r\n' % channel)
       channelLeaveTime = time.time()
       numPartAttempts = 0
@@ -123,22 +124,18 @@ def partChannels(irc):
             partPrefix, partCommand, partArgs = parseMessage(partData)
             if partCommand == 'PART':
                if partArgs[0] == channel:
-                  channelNames.remove(channel)
-                  logToConsole('Failed to part channel %s.' % channel)
+                  logToConsole('Left channel %s.' % channel)
+                  channelCount += 1
                   break
-         if time.time() - channellLeaveTime >= 1:
+         if time.time() - channelLeaveTime >= 1:
             numPartAttempts += 1
             if numPartAttempts == 3:
                logToConsole('Failed to part channel %s.' % channel)
-               channelNames.remove(channel)
                break
             irc.send('PART %s\r\n' % channel)
             channelLeaveTime = time.time()
-   if len(channelNames) > 0:
-      channelsNotLeft = ''
-      for channel in channelNames:
-         channelsNotLeft += channel + ' '
-      logToConsole('Channels not left(GettingToThisPrintStatementIsPrettyBad.jpg): ' + channelsNotLeft)
+   if numChannelsToJoin - channelCount > 0:
+      logToConsole('Unable to part %i channels.' % (numChannelsToJoin - channelCount))
    channelNames = []
 
 def startKappaFeed():
@@ -146,4 +143,5 @@ def startKappaFeed():
    while True:
       joinChannels(irc)
       channelScan(irc)
-      partChannels(irc)
+      partChannels(irc, channelNames)
+      logToConsole('Refreshing channel list...')
