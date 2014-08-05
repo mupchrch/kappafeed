@@ -7,11 +7,11 @@ from tornado.options import define, options, parse_command_line
 
 define("port", default=80, help="run on the given port", type=int)
 
-# we gonna store clients in dictionary..
 clients = []
 
 def logToConsole(s):
    print '{serv} ' + s
+   sys.stdout.flush()
 
 class IndexHandler(tornado.web.RequestHandler):
    @tornado.web.asynchronous
