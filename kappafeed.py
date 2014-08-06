@@ -21,21 +21,32 @@ def parseMessage(s):
    """
    prefix = ''
    trailing = []
+   command = 'UNKNOWN'
+   args = []
+
    if not s:
-      raise IRCBadMessage("Empty line.")
-   if s[0] == ':':
-      prefix, s = s[1:].split(' ', 1)
-   if s.find(' :') != -1:
-      s, trailing = s.split(' :', 1)
-      args = s.split()
-      args.append(trailing)
-   else:
-      args = s.split()
+      #raise IRCBadMessage("Empty line.")
+      logToConsole('Empty line in IRC message.')
+      return prefix, command, args
+
+   try:
+      if s[0] == ':':
+         prefix, s = s[1:].split(' ', 1)
+      if s.find(' :') != -1:
+         s, trailing = s.split(' :', 1)
+         args = s.split()
+         args.append(trailing)
+      else:
+         args = s.split()
+   except:
+      logToConsole('Error in parseMessage.')
+      return prefix, command, args
+
    if len(args) == 0:
       logToConsole('No command in IRC message.')
-      command = 'UNKNOWN'
    else:
       command = args.pop(0)
+
    return prefix, command, args
 
 def emoteFilter(s, filt):
@@ -52,15 +63,16 @@ def getTopStreams():
    twitchJson = json.load(rawjson)
 
    numChan = 0
+   topChannels = []
 
    for twitchStream in twitchJson['streams']:
       if numChan == numChannelsToJoin:
          break
-      channelNames.append('#' + twitchStream['channel']['name'])
+      topChannels.append('#' + twitchStream['channel']['name'])
       numChan += 1
+   return topChannels
 
 def chatConnect():
-   getTopStreams()
    logToConsole('Connecting to Twitch...')
 
    irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -72,8 +84,9 @@ def chatConnect():
    return irc
 
 def joinChannels(irc):
+   channelsToJoin = getTopStreams()
    logToConsole('Joining channels...')
-   for channel in channelNames:
+   for channel in channelsToJoin:
       irc.send('JOIN %s\r\n' % channel)
       channelStartTime = time.time()
       numJoinAttempts = 0
@@ -89,10 +102,11 @@ def joinChannels(irc):
             numJoinAttempts += 1
             if numJoinAttempts == 3:
                logToConsole('Failed to join channel %s.' % channel)
-               channelNames.remove(channel)
+               channelsToJoin.remove(channel)
                break
             irc.send('JOIN %s\r\n' % channel)
             channelStartTime = time.time()
+   return channelsToJoin
 
 def channelScan(irc):
    logToConsole('Scanning for %s...' % emote)
@@ -112,7 +126,6 @@ def channelScan(irc):
                      #We didn't find a 'Kappa' Kappa
                      server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
                      #print('{kf}%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
-					 
             elif command == 'PING':
                logToConsole('Received PING.')
                logToConsole('Sending PONG...')
@@ -123,10 +136,11 @@ def channelScan(irc):
          #logToConsole('Error in channelScan.')
          #pass
 
-def partChannels(irc, channels):
+def partChannels(irc, channelsToPart):
    logToConsole('Parting channels...')
    channelCount = 0
-   for channel in channels:
+   channelsNotParted = []
+   for channel in channelsToPart:
       irc.send('PART %s\r\n' % channel)
       channelLeaveTime = time.time()
       numPartAttempts = 0
@@ -143,17 +157,19 @@ def partChannels(irc, channels):
             numPartAttempts += 1
             if numPartAttempts == 3:
                logToConsole('Failed to part channel %s.' % channel)
+               channelsNotParted.append(channel)
                break
             irc.send('PART %s\r\n' % channel)
             channelLeaveTime = time.time()
    if numChannelsToJoin - channelCount > 0:
       logToConsole('Unable to part %i channels.' % (numChannelsToJoin - channelCount))
-   channelNames = []
+   return channelsNotParted
 
 def startKappaFeed():
    irc = chatConnect()
+   channelNames = []
    while True:
-      joinChannels(irc)
+      channelNames = joinChannels(irc)
       channelScan(irc)
-      partChannels(irc, channelNames)
+      channelNames = partChannels(irc, channelNames)
       logToConsole('Refreshing channel list...')
