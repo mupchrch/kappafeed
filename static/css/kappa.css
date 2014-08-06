@@ -8,16 +8,30 @@
   border:1px solid #aaa;
   overflow:hidden;
 }
+
 .chat .messages{
   background:#eee;
   overflow:hidden;
   width:100%;
   height:300px;
 }
+
 .chat .messages:hover{
   overflow-y:scroll;
 }
+
 .chat .messages > div{
   padding:15px;
   border-bottom:1px dashed #999;
+}
+
+.kappa{
+  background-image: url(http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-ddc6e3a8732cb50f-25x28.png);
+  height: 28px;
+  width: 25px;
+  margin: -5px 0;
+}
+
+.emoticon{
+   display: inline-block;
 }

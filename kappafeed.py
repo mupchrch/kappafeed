@@ -32,7 +32,7 @@ def parseMessage(s):
    else:
       args = s.split()
    if len(args) == 0:
-      logToConsole('No command in IRC message: %s.' % s)
+      logToConsole('No command in IRC message.')
       command = 'UNKNOWN'
    else:
       command = args.pop(0)
@@ -98,7 +98,7 @@ def channelScan(irc):
    logToConsole('Scanning for %s...' % emote)
    kappaStartTime = time.time()
    while True:
-      try:
+      #try:
          data = irc.recv(512) #Make Data the Receive Buffer
          if data:
             prefix, command, args = parseMessage(data)
@@ -112,15 +112,16 @@ def channelScan(irc):
                      #We didn't find a 'Kappa' Kappa
                      server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
                      #print('{kf}%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+					 
             elif command == 'PING':
                logToConsole('Received PING.')
                logToConsole('Sending PONG...')
                irc.send('PONG :tmi.twitch.tv\r\n')
          if time.time() - kappaStartTime >= 3600:
             break
-      except:
-         logToConsole('Error in channelScan.')
-         pass
+      #except:
+         #logToConsole('Error in channelScan.')
+         #pass
 
 def partChannels(irc, channels):
    logToConsole('Parting channels...')
