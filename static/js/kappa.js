@@ -20,7 +20,9 @@ $(function() {
     });
 
     if ("WebSocket" in window) {
-        var ws = new WebSocket("ws://www.kappafeed.tv/feed");
+        var pathname = window.location.href;
+        var wsPath = 'ws' + pathname.substr(4) + 'feed';
+        var ws = new WebSocket(wsPath);
         ws.onopen = function() {
             printer.append('Connection open.');
             scrollBottom();
