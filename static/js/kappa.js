@@ -54,7 +54,6 @@ $(function() {
 function findKappas(s){
    var match, indices = [];
    while(match = kappaRegex.exec(s)){
-      console.log(match[0][0]);
       indices.push(match.index);
    }
    return indices;
