@@ -47,24 +47,28 @@ def parseMessage(s):
 
    return prefix, command, args
 
-def emoteLocations(s, filt):
-   emoteIndices = []
-   for m in filt.finditer(s):
-      if m.group()[0] != 'K':
-         emoteIndices.append(m.start()+1)
-      else:
-         emoteIndices.append(m.start())
-   return emoteIndices
+def emoteFilter (s, filt):
+   #Finds messages with the specified emote regex in them
+   return file.search(s)
 
-def buildEmoteString(emoteIndices, origMsg):
-   emoteString = '<span class="message">'
-   stringIndex = 0
-   for emoteIndex in emoteIndices:
-      emoteString += origMsg[stringIndex:emoteIndex]
-      emoteString += '<span class="emoticon kappa"></span>'
-      stringIndex = (emoteIndex+5)
-   emoteString += origMsg[stringIndex:] + '</span>'
-   return emoteString
+#def emoteLocations(s, filt):
+#   emoteIndices = []
+#   for m in filt.finditer(s):
+#      if m.group()[0] != 'K':
+#         emoteIndices.append(m.start()+1)
+#      else:
+#         emoteIndices.append(m.start())
+#   return emoteIndices
+
+#def buildEmoteString(emoteIndices, origMsg):
+#   emoteString = '<span class="message">'
+#   stringIndex = 0
+#   for emoteIndex in emoteIndices:
+#      emoteString += origMsg[stringIndex:emoteIndex]
+#      emoteString += '<span class="emoticon kappa"></span>'
+#      stringIndex = (emoteIndex+5)
+#   emoteString += origMsg[stringIndex:] + '</span>'
+#   return emoteString
 
 def logToConsole(s):
    print '{kf} ' + s
@@ -120,7 +124,7 @@ def joinChannels(irc):
             irc.send('JOIN %s\r\n' % channel)
             channelStartTime = time.time()
    return channelsToJoin
-   
+
 def channelScan(irc):
    logToConsole('Scanning for %s...' % emote)
    kappaStartTime = time.time()
@@ -134,10 +138,8 @@ def channelScan(irc):
             twitchMsg = args[1].rstrip('\r\n')
             if 'PRIVMSG' not in twitchMsg:
                filt = re.compile(r'\b' + emote + r'\b')
-               emoteIndices = emoteLocations(twitchMsg, filt)
-               if emoteIndices != []:
-                  msgToSend = buildEmoteString(emoteIndices, twitchMsg)
-                  server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, msgToSend))
+               if emoteFilter(twitchMsg, filt)
+                  server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
          elif command == 'PING':
             logToConsole('Received PING.')
             logToConsole('Sending PONG...')
