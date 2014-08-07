@@ -11,8 +11,6 @@ portNumber = 80
 nickname = "mupchrch"
 realName = "mupchrch"
 password = "oauth:d1ebu8gjs0aa0f49stppqxs7uqgeph7"
-#these will be the top 25 streams using twitch api at some point:
-channelNames = []
 numChannelsToJoin = 25
 emote = r'Kappa'
 
@@ -49,9 +47,24 @@ def parseMessage(s):
 
    return prefix, command, args
 
-def emoteFilter(s, filt):
-   #Finds messages with the specified emote regex in them
-   return filt.search(s)
+def emoteLocations(s, filt):
+   emoteIndices = []
+   for m in filt.finditer(s):
+      if m.group()[0] != 'K':
+         emoteIndices.append(m.start()+1)
+      else:
+         emoteIndices.append(m.start())
+   return emoteIndices
+
+def buildEmoteString(emoteIndices, origMsg):
+   emoteString = '<span class="message">'
+   stringIndex = 0
+   for emoteIndex in emoteIndices:
+      emoteString += origMsg[stringIndex:emoteIndex]
+      emoteString += '<span class="emoticon kappa"></span>'
+      stringIndex = (emoteIndex+5)
+   emoteString += origMsg[stringIndex:] + '</span>'
+   return emoteString
 
 def logToConsole(s):
    print '{kf} ' + s
@@ -107,34 +120,30 @@ def joinChannels(irc):
             irc.send('JOIN %s\r\n' % channel)
             channelStartTime = time.time()
    return channelsToJoin
-
+   
 def channelScan(irc):
    logToConsole('Scanning for %s...' % emote)
    kappaStartTime = time.time()
    while True:
-      #try:
-         data = irc.recv(512) #Make Data the Receive Buffer
-         if data:
-            prefix, command, args = parseMessage(data)
-            if command == 'PRIVMSG':
-               twitchUser = prefix[:prefix.find('!')]
-               twitchChannel = args[0]
-               twitchMsg = args[1].rstrip('\r\n')
-               if 'PRIVMSG' not in twitchMsg:
-                  filt = re.compile(r'(^|\s|\W)' + emote + r'($|\s|\W)')
-                  if emoteFilter(twitchMsg, filt):
-                     #We didn't find a 'Kappa' Kappa
-                     server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
-                     #print('{kf}%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
-            elif command == 'PING':
-               logToConsole('Received PING.')
-               logToConsole('Sending PONG...')
-               irc.send('PONG :tmi.twitch.tv\r\n')
-         if time.time() - kappaStartTime >= 3600:
-            break
-      #except:
-         #logToConsole('Error in channelScan.')
-         #pass
+      data = irc.recv(512) #TODO sometimes 2 msgs come together... fix it so we don't lose 2nd msg?
+      if data:
+         prefix, command, args = parseMessage(data)
+         if command == 'PRIVMSG':
+            twitchUser = prefix[:prefix.find('!')]
+            twitchChannel = args[0]
+            twitchMsg = args[1].rstrip('\r\n')
+            if 'PRIVMSG' not in twitchMsg:
+               filt = re.compile(r'\b' + emote + r'\b')
+               emoteIndices = emoteLocations(twitchMsg, filt)
+               if emoteIndices != []:
+                  msgToSend = buildEmoteString(emoteIndices, twitchMsg)
+                  server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, msgToSend))
+         elif command == 'PING':
+            logToConsole('Received PING.')
+            logToConsole('Sending PONG...')
+            irc.send('PONG :tmi.twitch.tv\r\n')
+      if time.time() - kappaStartTime >= 3600:
+         break
 
 def partChannels(irc, channelsToPart):
    logToConsole('Parting channels...')
