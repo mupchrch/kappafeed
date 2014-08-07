@@ -138,7 +138,7 @@ def channelScan(irc):
             twitchMsg = args[1].rstrip('\r\n')
             if 'PRIVMSG' not in twitchMsg:
                filt = re.compile(r'\b' + emote + r'\b')
-               if emoteFilter(twitchMsg, filt)
+               if emoteFilter(twitchMsg, filt):
                   server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
          elif command == 'PING':
             logToConsole('Received PING.')
