@@ -49,7 +49,7 @@ def parseMessage(s):
 
 def emoteFilter (s, filt):
    #Finds messages with the specified emote regex in them
-   return file.search(s)
+   return filt.search(s)
 
 #def emoteLocations(s, filt):
 #   emoteIndices = []
