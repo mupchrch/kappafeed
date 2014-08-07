@@ -1,4 +1,4 @@
-//var kappaRegex = /\bKappa\b/g;
+var kappaRegex = /\bKappa\b/g;
 
 $(function() {
     var chat = $('.chat'),
@@ -29,17 +29,17 @@ $(function() {
         };
         ws.onmessage = function (evt) {
             var received_msg = evt.data;
-            /*var indices = findKappas(received_msg);
+            var indices = findKappas(received_msg);
 
-            var kappaMessage = '<div><span class="message">';
+            var kappaMessage = '<span class="message">';
+            var currentIndex = 0;
             $.each(indices, function(index, value){
-               kappaMessage += received_msg.substring(0,value);
+               kappaMessage += received_msg.substring(currentIndex,value);
                kappaMessage += '<span class="emoticon kappa"></span>';
-               received_msg = received_msg.substr(value+5);
+               currentIndex = value+5;
             });
-            kappaMessage += received_msg + '</span></div>';
-            printer.append(kappaMessage);*/
-            printer.append('<div>' + received_msg + '</div>');
+            kappaMessage += received_msg.substring(currentIndex) + '</span>';
+            printer.append('<div>' + kappaMessage + '</div>');
             scrollBottom();
         };
         ws.onclose = function() {
@@ -51,10 +51,11 @@ $(function() {
     }
 });
 
-/*function findKappas(s){
+function findKappas(s){
    var match, indices = [];
    while(match = kappaRegex.exec(s)){
+      console.log(match[0][0]);
       indices.push(match.index);
    }
    return indices;
-}*/
+}
