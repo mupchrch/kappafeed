@@ -2,6 +2,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import os
+import sys
 
 from tornado.options import define, options, parse_command_line
 
@@ -23,23 +24,25 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
       logToConsole('Client connected.')
       clients.append(self)
       self.stream.set_nodelay(True)
-      self.write_message(u"Welcome to KappaFeed!")
+      #self.write_message(u"Welcome to KappaFeed!")
 
    def on_message(self, message):
       logToConsole("Received a message : %s" % message)
-      self.write_message(u"You said: " + message)
+      #self.write_message(u"You said: " + message)
 
    def on_close(self):
       logToConsole('Client left.')
       clients.remove(self)
 
 def sendToClients(message):
+   encodedMsg = tornado.escape.json_encode(message)
+   #print str(encodedMsg)
    for client in clients:
       if not client.ws_connection.stream.socket:
          logToConsole("Client left.")
          clients.remove(client)
       else:
-         client.write_message(message)
+         client.write_message(encodedMsg)
 
 settings = {
    "static_path": os.path.join(os.path.dirname(__file__), "static"),

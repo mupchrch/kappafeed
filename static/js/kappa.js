@@ -1,4 +1,6 @@
 var kappaRegex = /\bKappa\b/g;
+var kappaCount = 0;
+var kpmArray = []
 
 $(function() {
     var chat = $('.chat'),
@@ -24,22 +26,27 @@ $(function() {
         var wsPath = 'ws' + pathname.substr(4) + 'feed';
         var ws = new WebSocket(wsPath);
         ws.onopen = function() {
+            kappaCount = 0;
+            kpmArray = [];
+            window.setInterval(kappaPerMin, 3000);
             printer.append('Connection open.');
             scrollBottom();
         };
         ws.onmessage = function (evt) {
-            var received_msg = evt.data;
-            var indices = findKappas(received_msg);
+            var jsonMsg = JSON.parse(evt.data);
+            var indices = findKappas(jsonMsg.msg);
+            kappaCount += indices.length;
 
-            var kappaMessage = '<span class="message">';
+            var kappaMsg = '<span class="message">';
+            kappaMsg += jsonMsg.channel + ' -> ' + jsonMsg.user +': ';
             var currentIndex = 0;
             $.each(indices, function(index, value){
-               kappaMessage += received_msg.substring(currentIndex,value);
-               kappaMessage += '<span class="emoticon kappa"></span>';
+               kappaMsg += jsonMsg.msg.substring(currentIndex,value);
+               kappaMsg += '<span class="emoticon kappa"></span>';
                currentIndex = value+5;
             });
-            kappaMessage += received_msg.substring(currentIndex) + '</span>';
-            printer.append('<div>' + kappaMessage + '</div>');
+            kappaMsg += jsonMsg.msg.substring(currentIndex) + '</span>';
+            printer.append('<div>' + kappaMsg + '</div>');
             scrollBottom();
         };
         ws.onclose = function() {
@@ -57,4 +64,20 @@ function findKappas(s){
       indices.push(match.index);
    }
    return indices;
+}
+
+function kappaPerMin(){
+   var kpm = kappaCount * 20;
+   kpmArray.push(kpm);
+   if(kpmArray.length > 5){
+      kpmArray.shift();
+   }
+   var avgKpm = 0;
+   for(var i=0; i<kpmArray.length; i++){
+      avgKpm += kpmArray[i];
+   }
+   avgKpm /= kpmArray.length;
+   $('div.kpm').text(avgKpm + 'kpm');
+   console.log(avgKpm + 'kpm');
+   kappaCount = 0;
 }

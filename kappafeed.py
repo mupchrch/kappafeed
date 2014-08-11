@@ -51,25 +51,6 @@ def emoteFilter (s, filt):
    #Finds messages with the specified emote regex in them
    return filt.search(s)
 
-#def emoteLocations(s, filt):
-#   emoteIndices = []
-#   for m in filt.finditer(s):
-#      if m.group()[0] != 'K':
-#         emoteIndices.append(m.start()+1)
-#      else:
-#         emoteIndices.append(m.start())
-#   return emoteIndices
-
-#def buildEmoteString(emoteIndices, origMsg):
-#   emoteString = '<span class="message">'
-#   stringIndex = 0
-#   for emoteIndex in emoteIndices:
-#      emoteString += origMsg[stringIndex:emoteIndex]
-#      emoteString += '<span class="emoticon kappa"></span>'
-#      stringIndex = (emoteIndex+5)
-#   emoteString += origMsg[stringIndex:] + '</span>'
-#   return emoteString
-
 def logToConsole(s):
    print '{kf} ' + s
    sys.stdout.flush()
@@ -139,7 +120,11 @@ def channelScan(irc):
             if 'PRIVMSG' not in twitchMsg:
                filt = re.compile(r'\b' + emote + r'\b')
                if emoteFilter(twitchMsg, filt):
-                  server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+                  #TODO build json object here for channelname, username, msg
+                  #jsonMsg = []
+                  server.sendToClients({'channel': twitchChannel, 'user': twitchUser, 'msg': twitchMsg})
+                  #server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
+                  #server.sendToClients(jsonMsg)
          elif command == 'PING':
             logToConsole('Received PING.')
             logToConsole('Sending PONG...')
