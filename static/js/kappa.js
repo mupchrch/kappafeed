@@ -37,8 +37,10 @@ $(function() {
             var indices = findKappas(jsonMsg.msg);
             kappaCount += indices.length;
 
-            var kappaMsg = '<span class="message">';
-            kappaMsg += jsonMsg.channel + ' -> ' + jsonMsg.user +': ';
+            var kappaMsg = '<span class="channel">' + jsonMsg.channel + '</span>';
+            kappaMsg += '<span class="user">' + jsonMsg.user + ':</span>';
+            kappaMsg += '<span class="message">';
+            //kappaMsg += jsonMsg.channel + ' -> ' + jsonMsg.user +': ';
             var currentIndex = 0;
             $.each(indices, function(index, value){
                kappaMsg += jsonMsg.msg.substring(currentIndex,value);
