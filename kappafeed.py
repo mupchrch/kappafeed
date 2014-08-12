@@ -120,11 +120,7 @@ def channelScan(irc):
             if 'PRIVMSG' not in twitchMsg:
                filt = re.compile(r'\b' + emote + r'\b')
                if emoteFilter(twitchMsg, filt):
-                  #TODO build json object here for channelname, username, msg
-                  #jsonMsg = []
-                  server.sendToClients({'channel': twitchChannel, 'user': twitchUser, 'msg': twitchMsg})
-                  #server.sendToClients('%s -> %s: %s' % (twitchChannel, twitchUser, twitchMsg))
-                  #server.sendToClients(jsonMsg)
+                  server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': twitchUser.decode('utf8'), 'msg': twitchMsg.decode('utf8')})
          elif command == 'PING':
             logToConsole('Received PING.')
             logToConsole('Sending PONG...')
