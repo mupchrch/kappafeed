@@ -24,11 +24,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
       logToConsole('Client connected.')
       clients.append(self)
       self.stream.set_nodelay(True)
-      #self.write_message(u"Welcome to KappaFeed!")
 
    def on_message(self, message):
       logToConsole("Received a message : %s" % message)
-      #self.write_message(u"You said: " + message)
 
    def on_close(self):
       logToConsole('Client left.')
@@ -36,7 +34,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
 def sendToClients(message):
    encodedMsg = tornado.escape.json_encode(message)
-   #print str(encodedMsg)
+
    for client in clients:
       if not client.ws_connection.stream.socket:
          logToConsole("Client left.")
