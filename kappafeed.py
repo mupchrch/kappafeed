@@ -52,7 +52,7 @@ def emoteFilter (s, filt):
    return filt.search(s)
 
 def logToConsole(s):
-   print '{kf} ' + s
+   print '{kf} [' + time.strftime("%Y-%m-%d %H:%M:%S") + s
    sys.stdout.flush()
 
 def getTopStreams():
@@ -158,10 +158,14 @@ def partChannels(irc, channelsToPart):
    return channelsNotParted
 
 def startKappaFeed():
-   irc = chatConnect()
-   channelNames = []
    while True:
-      channelNames = joinChannels(irc)
-      channelScan(irc)
-      channelNames = partChannels(irc, channelNames)
-      logToConsole('Refreshing channel list...')
+      irc = chatConnect()
+      channelNames = []
+      while True:
+         channelNames = joinChannels(irc)
+         channelScan(irc)
+         channelNames = partChannels(irc, channelNames)
+         if len(channelNames) > 0:
+            break
+         logToConsole('Refreshing channel list...')
+      logToConsole('Restarting kappafeed...')
