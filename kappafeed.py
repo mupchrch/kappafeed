@@ -52,7 +52,7 @@ def emoteFilter (s, filt):
    return filt.search(s)
 
 def logToConsole(s):
-   print '{kf} [' + time.strftime("%Y-%m-%d %H:%M:%S") + s
+   print '{kf} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
    sys.stdout.flush()
 
 def getTopStreams():
