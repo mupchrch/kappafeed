@@ -3,6 +3,7 @@ import tornado.web
 import tornado.websocket
 import os
 import sys
+import time
 
 from tornado.options import define, options, parse_command_line
 
@@ -11,7 +12,7 @@ define("port", default=80, help="run on the given port", type=int)
 clients = []
 
 def logToConsole(s):
-   print '{serv} ' + s
+   print '{serv} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
    sys.stdout.flush()
 
 class IndexHandler(tornado.web.RequestHandler):
