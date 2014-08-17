@@ -120,7 +120,10 @@ def channelScan(irc):
             if 'PRIVMSG' not in twitchMsg:
                filt = re.compile(r'\b' + emote + r'\b')
                if emoteFilter(twitchMsg, filt):
-                  server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': twitchUser.decode('utf8'), 'msg': twitchMsg.decode('utf8')})
+                  try:
+                     server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': twitchUser.decode('utf8'), 'msg': twitchMsg.decode('utf8')})
+                  except:
+                     pass
          elif command == 'PING':
             logToConsole('Received PING.')
             logToConsole('Sending PONG...')
@@ -159,13 +162,16 @@ def partChannels(irc, channelsToPart):
 
 def startKappaFeed():
    while True:
-      irc = chatConnect()
-      channelNames = []
-      while True:
-         channelNames = joinChannels(irc)
-         channelScan(irc)
-         channelNames = partChannels(irc, channelNames)
-         if len(channelNames) > 0:
-            break
-         logToConsole('Refreshing channel list...')
-      logToConsole('Restarting kappafeed...')
+      try:
+         irc = chatConnect()
+         channelNames = []
+         while True:
+            channelNames = joinChannels(irc)
+            channelScan(irc)
+            channelNames = partChannels(irc, channelNames)
+            if len(channelNames) > 0:
+               break
+            logToConsole('Refreshing channel list...')
+         logToConsole('Restarting kappafeed...')
+      except:
+         logToConsole('Error, restarting kappafeed...')
