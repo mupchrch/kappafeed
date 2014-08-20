@@ -1,53 +1,93 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
 .chat{
-  font-family: Helvetica, Arial, sans-serif;
-  position: relative;
-  margin: 0 auto;
-  width: 600px;
-  /*color: #777;*/
-  border-radius: 10px;
-  border: 1px solid #aaa;
-  overflow: hidden;
+   font-family: Helvetica, Arial, sans-serif;
+   margin: 0 auto;
+   width: 600px;
+   position: fixed;
+   left: 0px;
+   top: 15px;
+   right: 0px;
+   bottom: 15px;
+   overflow: hidden;
+   /*border-radius: 10px;*/
+   border: 1px solid #aaa;
 }
 
 .chat .messages{
-  background: #eee;
-  overflow: hidden;
-  width: 100%;
-  height: 300px;
+   background: #eee;
+   overflow: hidden;
+   width: 100%;
+   height: 100%;
 }
 
 .chat .messages:hover{
-  overflow-y: scroll;
+   overflow-y: scroll;
 }
 
 .chat .messages > div{
-  padding: 15px;
-  border-bottom: 1px dashed #999;
+   padding: 15px;
+   border-bottom: 1px solid #999;
 }
 
 .kappa{
-  background-image: url(http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-ddc6e3a8732cb50f-25x28.png);
-  height: 28px;
-  width: 25px;
-  margin: -5px 0;
+   /*background-image: url(http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-ddc6e3a8732cb50f-25x28.png);*/
+   background-image: url(http://kappafeed.tv/static/images/kappa-md.png);
+   /*height: 28px;
+   width: 25px;*/
+   width: 32px;
+   height: 43px;
+   /*margin: -5px 0;*/
+   margin: -12px 0;
 }
 
 .emoticon{
    display: inline-block;
 }
 
-span.channel{
+a.channelLink{
    display: inline-block;
-   font-size: .75em;
    color: blue;
 }
 
+a.channelLink:visited{
+   color: blue;
+}
+
+div.channelDiv{
+   width: 80px;
+   float: left;
+}
+
+div.userMsgDiv{
+   display: block;
+   margin-left: 80px;
+}
+
+span.channel{
+   font-size: 10px;
+}
+
 span.user{
-   display: inline-block;
+   background: #eee;
    color: red;
 }
 
 span.message{
+   background: #eee;
    display: inline;
    color: black;
+   font-size: 1em;
+   line-height: 30px;
+}
+
+div.kpm{
+   font-family: Helvetica, Arial, sans-serif;
+   float: right;
+   color: green;
+   font-size: 2em;
 }

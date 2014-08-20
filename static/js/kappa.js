@@ -1,6 +1,7 @@
 var kappaRegex = /\bKappa\b/g;
 var kappaCount = 0;
 var kpmArray = []
+var msgCount = 0;
 
 $(function() {
     var chat = $('.chat'),
@@ -25,36 +26,45 @@ $(function() {
         var pathname = window.location.href;
         var wsPath = 'ws' + pathname.substr(4) + 'feed';
         var ws = new WebSocket(wsPath);
+
         ws.onopen = function() {
+            msgCount = 0;
             kappaCount = 0;
             kpmArray = [];
             window.setInterval(kappaPerMin, 3000);
             printer.append('Connection open.');
             scrollBottom();
         };
+
         ws.onmessage = function (evt) {
+            //msgCount++;
             var jsonMsg = JSON.parse(evt.data);
             var indices = findKappas(jsonMsg.msg);
             kappaCount += indices.length;
 
-            var kappaMsg = '<span class="channel">' + jsonMsg.channel + '</span>';
-            kappaMsg += '<span class="user">' + jsonMsg.user + ':</span>';
+            var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
+                jsonMsg.channel.substring(1)  + '" target="_blank">' + jsonMsg.channel + '</a></span></div>';
+            kappaMsg += '<div class="userMsgDiv"><span class="user">' + jsonMsg.user + ': </span>';
             kappaMsg += '<span class="message">';
-            //kappaMsg += jsonMsg.channel + ' -> ' + jsonMsg.user +': ';
+
             var currentIndex = 0;
             $.each(indices, function(index, value){
                kappaMsg += jsonMsg.msg.substring(currentIndex,value);
                kappaMsg += '<span class="emoticon kappa"></span>';
                currentIndex = value+5;
             });
-            kappaMsg += jsonMsg.msg.substring(currentIndex) + '</span>';
-            printer.append('<div>' + kappaMsg + '</div>');
+
+            kappaMsg += jsonMsg.msg.substring(currentIndex) + '</span></div>';
+            printer.append('<div class="msgDiv">' + kappaMsg + '</div>');
+            //fitText('div.msg'+msgCount);
             scrollBottom();
         };
+
         ws.onclose = function() {
             printer.append('Connection closed.');
             scrollBottom();
         };
+
     } else {
         alert('websocket not supported');
     }
@@ -80,6 +90,15 @@ function kappaPerMin(){
    }
    avgKpm /= kpmArray.length;
    $('div.kpm').text(avgKpm + 'kpm');
-   console.log(avgKpm + 'kpm');
    kappaCount = 0;
 }
+
+/*function fitText(msgDiv) {
+    var span = $(msgDiv).find('span.channel');
+    var fontSize = parseInt(span.css('font-size'));
+
+    do {
+        fontSize -= 2;
+        span.css('font-size', fontSize.toString() + 'px');
+    } while (span.width() >= 80);
+}*/
