@@ -16,6 +16,7 @@ html, body {
    overflow: hidden;
    /*border-radius: 10px;*/
    border: 1px solid #aaa;
+   max-height: 750px;
 }
 
 .chat .messages{
