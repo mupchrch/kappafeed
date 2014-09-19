@@ -5,7 +5,7 @@ import urllib2
 import json
 import time
 import sys
-#hi mike
+
 serverAddress = "irc.twitch.tv"
 portNumber = 80
 nickname = "mupchrch"
