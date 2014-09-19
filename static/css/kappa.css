@@ -87,6 +87,14 @@ span.message{
    line-height: 30px;
 }
 
+span.action{
+   background: #eee;
+   display: inline;
+   color: green;
+   font-size: 1em;
+   line-height: 30px;
+}
+
 div.kpm{
    font-family: Helvetica, Arial, sans-serif;
    float: right;

@@ -44,8 +44,15 @@ $(function() {
 
             var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
                 jsonMsg.channel.substring(1)  + '" target="_blank">' + jsonMsg.channel + '</a></span></div>';
-            kappaMsg += '<div class="userMsgDiv"><span class="user">' + jsonMsg.user + ': </span>';
-            kappaMsg += '<span class="message">';
+            kappaMsg += '<div class="userMsgDiv"><span class="user">' + jsonMsg.user;
+
+            if(jsonMsg.msg.substring(1,7) == 'ACTION'){
+               kappaMsg += ' </span><span class="action">';
+               jsonMsg.msg = jsonMsg.msg.substring(7);
+            }
+            else{
+               kappaMsg += ': </span><span class="message">';
+            }
 
             var currentIndex = 0;
             $.each(indices, function(index, value){

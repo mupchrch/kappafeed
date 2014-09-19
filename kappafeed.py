@@ -81,7 +81,7 @@ def chatConnect():
    irc.send('USER %s %s %s :%s\r\n' % (nickname, serverAddress, nickname, realName))
    return irc
 
-def joinChannels(irc):
+   def joinChannels(irc):
    channelsToJoin = getTopStreams()
    logToConsole('Joining channels...')
    for channel in channelsToJoin:
@@ -120,7 +120,7 @@ def channelScan(irc):
             if 'PRIVMSG' not in twitchMsg:
                filt = re.compile(r'\b' + emote + r'\b')
                if emoteFilter(twitchMsg, filt):
-			      try:
+                  try:
                      server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': twitchUser.decode('utf8'), 'msg': twitchMsg.decode('utf8')})
                   except:
                      pass
