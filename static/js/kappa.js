@@ -39,8 +39,8 @@ $(function() {
         ws.onmessage = function (evt) {
             //msgCount++;
             var jsonMsg = JSON.parse(evt.data);
-            var indices = findKappas(jsonMsg.msg);
-            kappaCount += indices.length;
+            //var indices = findKappas(jsonMsg.msg);
+            //kappaCount += indices.length;
 
             var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
                 jsonMsg.channel.substring(1)  + '" target="_blank">' + jsonMsg.channel + '</a></span></div>';
@@ -53,6 +53,9 @@ $(function() {
             else{
                kappaMsg += ': </span><span class="message">';
             }
+
+            var indices = findKappas(jsonMsg.msg);
+            kappaCount += indices.length;
 
             var currentIndex = 0;
             $.each(indices, function(index, value){
