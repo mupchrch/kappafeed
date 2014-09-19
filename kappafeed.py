@@ -5,7 +5,7 @@ import urllib2
 import json
 import time
 import sys
-
+#hi mike
 serverAddress = "irc.twitch.tv"
 portNumber = 80
 nickname = "mupchrch"
@@ -81,7 +81,7 @@ def chatConnect():
    irc.send('USER %s %s %s :%s\r\n' % (nickname, serverAddress, nickname, realName))
    return irc
 
-   def joinChannels(irc):
+def joinChannels(irc):
    channelsToJoin = getTopStreams()
    logToConsole('Joining channels...')
    for channel in channelsToJoin:
