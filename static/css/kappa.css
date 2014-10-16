@@ -4,13 +4,27 @@ html, body {
     height: 100%;
 }
 
+div.banner{
+   background: #6441a5;
+   height: 70px;
+   width: 100%;
+}
+
+div.title{
+   font-family: Helvetica, Arial, sans-serif;
+   color: white;
+   font-size: 50px;
+   font-weight: bold;
+   display: inline;
+}
+
 .chat{
    font-family: Helvetica, Arial, sans-serif;
    margin: 0 auto;
    width: 600px;
    position: fixed;
    left: 0px;
-   top: 15px;
+   top: 85px;
    right: 0px;
    bottom: 15px;
    overflow: hidden;
@@ -24,6 +38,7 @@ html, body {
    overflow: hidden;
    width: 100%;
    height: 100%;
+   overflow-y: scroll;
 }
 
 .chat .messages:hover{
@@ -98,6 +113,7 @@ span.action{
 div.kpm{
    font-family: Helvetica, Arial, sans-serif;
    float: right;
-   color: green;
+   color: white;
    font-size: 2em;
+   padding-top: 25px;
 }

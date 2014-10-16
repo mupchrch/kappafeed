@@ -11,7 +11,13 @@ $(function() {
 
     function scrollBottom(){
         if(!preventNewScroll){
-            printer.stop().animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600);
+            printer.stop(/*false,true*/).animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600, 'swing', function(){
+               for(var i=10; i<msgCount; i++){
+                  $(printer).find('div').first().remove();
+console.log("yeah");
+               }
+               msgCount = 10;
+            });
         }
     }
 
@@ -32,12 +38,12 @@ $(function() {
             kappaCount = 0;
             kpmArray = [];
             window.setInterval(kappaPerMin, 3000);
-            printer.append('Connection open.');
+            printer.append('Welcome to kappafeed.');
             scrollBottom();
         };
 
         ws.onmessage = function (evt) {
-            //msgCount++;
+            msgCount++;
             var jsonMsg = JSON.parse(evt.data);
             //var indices = findKappas(jsonMsg.msg);
             //kappaCount += indices.length;
@@ -67,6 +73,7 @@ $(function() {
             kappaMsg += jsonMsg.msg.substring(currentIndex) + '</span></div>';
             printer.append('<div class="msgDiv">' + kappaMsg + '</div>');
             //fitText('div.msg'+msgCount);
+
             scrollBottom();
         };
 
