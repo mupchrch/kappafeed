@@ -70,6 +70,17 @@ a.channelLink:visited{
    color: blue;
 }
 
+a.userLink{
+   display: inline-block;
+   color: red;
+   text-decoration: none;
+}
+
+a.userLink:visited{
+   color: red;
+   text-decoration: none;
+}
+
 div.channelDiv{
    width: 80px;
    float: left;
@@ -113,4 +124,5 @@ div.kpm{
    font-size: 2em;
    padding-top: 25px;
    font-weight: bold;
+   display: inline-block;
 }
