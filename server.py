@@ -20,10 +20,10 @@ class IndexHandler(tornado.web.RequestHandler):
    def get(self):
       self.render("website/index.html")
 
-class KappaHandler(tornado.web.RequestHandler):
-   @tornado.web.asynchronous
-   def get(self):
-      self.render("static/kappa.png")
+#class KappaHandler(tornado.web.RequestHandler):
+#   @tornado.web.asynchronous
+#   def get(self):
+#      self.render("static/kappa.png")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
    def open(self):
@@ -58,8 +58,10 @@ app = tornado.web.Application([
    (r'/index', IndexHandler),
    (r'/feed', WebSocketHandler),
    (r'/(favicon.ico)', tornado.web.StaticFileHandler, {"path": ""}),
-   (r'/(kappa.png)', KappaHandler),
+#   (r'/(kappa.png)', tornado.web.StaticFileHandler, {"path": "/static/images/kappa.png"}),
 ],**settings)
+   #(r'/(kappa.png)', KappaHandler),
+#],**settings)
 
 def startServer():
    logToConsole('Starting server...')

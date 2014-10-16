@@ -11,11 +11,11 @@ div.banner{
 }
 
 div.title{
-   font-family: Helvetica, Arial, sans-serif;
-   color: white;
-   font-size: 50px;
-   font-weight: bold;
-   display: inline;
+   height: 69px;
+   width: 200px;
+   display: inline-block;
+   background-image: url(http://kappafeed.tv/static/images/kappa-logo.png);
+   background-size: 200px 69px;
 }
 
 .chat{
@@ -51,13 +51,9 @@ div.title{
 }
 
 .kappa{
-   /*background-image: url(http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-ddc6e3a8732cb50f-25x28.png);*/
    background-image: url(http://kappafeed.tv/static/images/kappa-md.png);
-   /*height: 28px;
-   width: 25px;*/
    width: 32px;
    height: 43px;
-   /*margin: -5px 0;*/
    margin: -12px 0;
 }
 
@@ -116,4 +112,5 @@ div.kpm{
    color: white;
    font-size: 2em;
    padding-top: 25px;
+   font-weight: bold;
 }

@@ -2,6 +2,7 @@ var kappaRegex = /\bKappa\b/g;
 var kappaCount = 0;
 var kpmArray = []
 var msgCount = 0;
+var maxNumMsg = 40;
 
 $(function() {
     var chat = $('.chat'),
@@ -12,11 +13,12 @@ $(function() {
     function scrollBottom(){
         if(!preventNewScroll){
             printer.stop(/*false,true*/).animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600, 'swing', function(){
-               for(var i=10; i<msgCount; i++){
-                  $(printer).find('div').first().remove();
-console.log("yeah");
+               if(msgCount > maxNumMsg){
+                  for(var i=maxNumMsg; i<msgCount; i++){
+                     $(printer).find('div').first().remove();
+                  }
+                  msgCount -= (i-maxNumMsg);
                }
-               msgCount = 10;
             });
         }
     }
