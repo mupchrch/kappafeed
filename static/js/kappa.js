@@ -108,6 +108,7 @@ function kappaPerMin(){
       avgKpm += kpmArray[i];
    }
    avgKpm /= kpmArray.length;
+   avgKpm = Math.round(avgKpm);
    $('div.kpm').text(avgKpm + 'kpm');
    kappaCount = 0;
 }

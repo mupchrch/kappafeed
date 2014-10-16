@@ -11,11 +11,11 @@ div.banner{
 }
 
 div.title{
-   height: 69px;
-   width: 200px;
+   height: 80px;
+   width: 280px;
    display: inline-block;
-   background-image: url(http://kappafeed.tv/static/images/kappa-logo.png);
-   background-size: 200px 69px;
+   background-image: url(http://kappafeed.tv/static/images/kappafeed-logo-straight.png);
+   background-size: 280px 80px;
 }
 
 .chat{
