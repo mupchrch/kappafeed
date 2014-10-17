@@ -8,9 +8,9 @@ import sys
 
 serverAddress = "irc.twitch.tv"
 portNumber = 80
-nickname = "mupchrch"
-realName = "mupchrch"
-password = "oauth:d1ebu8gjs0aa0f49stppqxs7uqgeph7"
+nickname = "kappafeed"
+realName = "kappafeed"
+password = "oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk"
 numChannelsToJoin = 25
 emote = r'Kappa'
 
