@@ -167,6 +167,9 @@ def startKappaFeed():
          channelNames = []
          while True:
             channelNames = joinChannels(irc)
+            #restart program if no channels were successfully joined
+            if len(channelNames) == 0:
+                break
             channelScan(irc)
             channelNames = partChannels(irc, channelNames)
             if len(channelNames) > 0:
