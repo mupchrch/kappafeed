@@ -18,6 +18,12 @@ div.title{
    background-size: 280px 80px;
 }
 
+div.info{
+   float: left;
+   color: #999;
+   padding-left: 3px;
+}
+
 .chat{
    font-family: Helvetica, Arial, sans-serif;
    margin: 0 auto;
