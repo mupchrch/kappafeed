@@ -176,5 +176,5 @@ def startKappaFeed():
                break
             logToConsole('Refreshing channel list...')
          logToConsole('Restarting kappafeed...')
-      except e:
+      except Exception, e:
          logToConsole('Error, restarting kappafeed... ' + str(e))
