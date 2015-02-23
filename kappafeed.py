@@ -1,3 +1,6 @@
+import Logger
+import IrcConnection
+
 import socket
 import re
 import server
@@ -5,18 +8,18 @@ import urllib2
 import json
 import time
 import sys
+#from thread import start_new_thread
 
+apiAddress = "https://api.twitch.tv/kraken/"
 serverAddress = "irc.twitch.tv"
 portNumber = 80
-nickname = "kappafeed"
-realName = "kappafeed"
-password = "oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk"
+userName = "kappafeed"
+oauthToken = "oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk"
 numChannelsToJoin = 25
 emote = r'Kappa'
 
 def parseMessage(s):
-   """Breaks a message from an IRC server into its prefix, command, and arguments.
-   """
+   #Breaks a message from an IRC server into its prefix, command, and arguments.
    prefix = ''
    trailing = []
    command = 'UNKNOWN'
@@ -57,9 +60,11 @@ def logToConsole(s):
 
 def getTopStreams():
    logToConsole('Getting top streams...')
-   rawjson = urllib2.urlopen('https://api.twitch.tv/kraken/streams')
+   rawjson = urllib2.urlopen(apiAddress + 'streams')
    twitchJson = json.load(rawjson)
 
+
+   logToConsole('Building stream list...')
    numChan = 0
    topChannels = []
 
@@ -69,17 +74,6 @@ def getTopStreams():
       topChannels.append('#' + twitchStream['channel']['name'])
       numChan += 1
    return topChannels
-
-def chatConnect():
-   logToConsole('Connecting to Twitch...')
-
-   irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-   irc.connect((serverAddress, portNumber))
-
-   irc.send('PASS %s\r\n' % password)
-   irc.send('NICK %s\r\n' % nickname)
-   irc.send('USER %s %s %s :%s\r\n' % (nickname, serverAddress, nickname, realName))
-   return irc
 
 def joinChannels(irc):
    channelsToJoin = getTopStreams()
@@ -110,8 +104,9 @@ def channelScan(irc):
    logToConsole('Scanning for %s...' % emote)
    kappaStartTime = time.time()
    while True:
-      data = irc.recv(512) #TODO sometimes 2 msgs come together... fix it so we don't lose 2nd msg?
+      data = irc.recv(1024) #TODO sometimes 2 msgs come together... fix it so we don't lose 2nd msg?
       if data:
+         logToConsole(data)
          prefix, command, args = parseMessage(data)
          if command == 'PRIVMSG':
             twitchUser = prefix[:prefix.find('!')]
@@ -160,21 +155,42 @@ def partChannels(irc, channelsToPart):
       logToConsole('Unable to part %i channels.' % (numChannelsToJoin - channelCount))
    return channelsNotParted
 
+def ircListen(irc, logger):
+    logger.log('Listening for irc...')
+    while True:
+        rec = irc.recv(1024)
+        if rec:
+            logToConsole(rec)
+
 def startKappaFeed():
-   while True:
-      try:
-         irc = chatConnect()
-         channelNames = []
-         while True:
-            channelNames = joinChannels(irc)
-            #restart program if no channels were successfully joined
-            if len(channelNames) == 0:
-                break
-            channelScan(irc)
-            channelNames = partChannels(irc, channelNames)
-            if len(channelNames) > 0:
-               break
-            logToConsole('Refreshing channel list...')
-         logToConsole('Restarting kappafeed...')
-      except Exception, e:
-         logToConsole('Error, restarting kappafeed... ' + str(e))
+#    while True:
+    kfLogger = Logger.Logger('kf')
+    kfLogger.log('testing...')
+
+    irc = IrcConnection.IrcConnection(oauthToken, userName)
+    irc.connect(serverAddress, portNumber, True)
+
+    #TODO(mike): move this method to ircconnection class?
+    ircListen(irc.getIrc(), kfLogger)
+
+    #start_new_thread(ircListen, (irc.getIrc,))
+
+#        try:
+#            irc = chatConnect()
+#            while True:
+#                t = raw_input('input:')
+#                irc.send('%s\r\n' % str(t))
+#            channelNames = []
+#            while True:
+#                channelNames = joinChannels(irc)
+#                #restart program if no channels were successfully joined
+#                if len(channelNames) == 0:
+#                    break
+#                channelScan(irc)
+#                channelNames = partChannels(irc, channelNames)
+#                if len(channelNames) > 0:
+#                    break
+#                logToConsole('Refreshing channel list...')
+#            logToConsole('Restarting kappafeed...')
+#        except Exception, e:
+#            logToConsole('Error, restarting kappafeed... ' + str(e))
