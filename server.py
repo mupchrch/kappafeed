@@ -12,13 +12,13 @@ define("port", default=80, help="run on the given port", type=int)
 clients = []
 
 def logToConsole(s):
-   print '{serv} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
-   sys.stdout.flush()
+    print '{serv} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
+    sys.stdout.flush()
 
 class IndexHandler(tornado.web.RequestHandler):
-   @tornado.web.asynchronous
-   def get(self):
-      self.render("website/index.html")
+    @tornado.web.asynchronous
+    def get(self):
+        self.render("website/index.html")
 
 #class KappaHandler(tornado.web.RequestHandler):
 #   @tornado.web.asynchronous
@@ -26,48 +26,45 @@ class IndexHandler(tornado.web.RequestHandler):
 #      self.render("static/kappa.png")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-   def open(self):
-      logToConsole('Client connected.')
-      clients.append(self)
-      self.stream.set_nodelay(True)
+    def open(self):
+        logToConsole('Client connected.')
+        clients.append(self)
+        self.stream.set_nodelay(True)
 
-   def on_message(self, message):
-      logToConsole("Received a message : %s" % message)
+    def on_message(self, message):
+        logToConsole("Received a message : %s" % message)
 
-   def on_close(self):
-      logToConsole('Client left.')
-      clients.remove(self)
+    def on_close(self):
+        logToConsole('Client left.')
+        clients.remove(self)
 
 def sendToClients(message):
-   encodedMsg = tornado.escape.json_encode(message)
+    encodedMsg = tornado.escape.json_encode(message)
 
-   for client in clients:
-      if not client.ws_connection.stream.socket:
-         logToConsole("Client left.")
-         clients.remove(client)
-      else:
-         client.write_message(encodedMsg)
+    for client in clients:
+        if not client.ws_connection.stream.socket:
+            logToConsole("Client left.")
+            clients.remove(client)
+        else:
+            client.write_message(encodedMsg)
 
 settings = {
-   "static_path": os.path.join(os.path.dirname(__file__), "static"),
-   "website_path": os.path.join(os.path.dirname(__file__), "website"),
+    "static_path": os.path.join(os.path.dirname(__file__), "static"),
+    "website_path": os.path.join(os.path.dirname(__file__), "website"),
 }
 
 app = tornado.web.Application([
-   (r'/', IndexHandler),
-   (r'/index', IndexHandler),
-   (r'/feed', WebSocketHandler),
-   (r'/(favicon.ico)', tornado.web.StaticFileHandler, {"path": ""}),
-#   (r'/(kappa.png)', tornado.web.StaticFileHandler, {"path": "/static/images/kappa.png"}),
+    (r'/', IndexHandler),
+    (r'/index', IndexHandler),
+    (r'/feed', WebSocketHandler),
+    (r'/(favicon.ico)', tornado.web.StaticFileHandler, {"path": ""}),
 ],**settings)
-   #(r'/(kappa.png)', KappaHandler),
-#],**settings)
 
 def startServer():
-   logToConsole('Starting server...')
-   parse_command_line()
-   app.listen(options.port)
-   tornado.ioloop.IOLoop.instance().start()
+    logToConsole('Starting server...')
+    parse_command_line()
+    app.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
-   startServer()
+    startServer()
