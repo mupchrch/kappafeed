@@ -26,24 +26,6 @@ def logToConsole(s):
     print '{kf} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
     sys.stdout.flush()
 
-def getTopStreams():
-    logToConsole('Getting top streams...')
-    rawjson = urllib2.urlopen(apiAddress + 'streams')
-    twitchJson = json.load(rawjson)
-
-
-    logToConsole('Building stream list...')
-    numChan = 0
-    topChannels = []
-
-    for twitchStream in twitchJson['streams']:
-        if numChan == numChannelsToJoin:
-            break
-        #TODO(mike): don't add # in front of channel names
-        topChannels.append('#' + twitchStream['channel']['name'])
-        numChan += 1
-    return topChannels
-
 #TODO(mike): move this method to ircconnection class?
 #def channelScan(irc):
 #    logToConsole('Scanning for %s...' % emote)
