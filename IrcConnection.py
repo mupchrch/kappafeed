@@ -1,4 +1,5 @@
 import Logger
+import IrcMessage
 
 import socket
 import time
@@ -19,7 +20,7 @@ class IrcConnection(object):
         self.sendMsg('USER %s %s %s :%s' %
                  (self.userName, serverAddress, self.userName, self.userName))
 
-        connResponse = self.recMsg()
+        connResponse = self.recMsgs()
         if connResponse:
             self.ircLogger.log(connResponse)
 
@@ -27,7 +28,7 @@ class IrcConnection(object):
             time.sleep(1)
             self.ircLogger.log('Sending capability request...')
             self.sendMsg('CAP REQ :twitch.tv/tags')
-            capResponse = self.recMsg()
+            capResponse = self.recMsgs()
             if capResponse:
                 self.ircLogger.log(capResponse)
 
@@ -37,17 +38,18 @@ class IrcConnection(object):
     def sendMsg(self, msg):
         self.ircSocket.send(msg + '\r\n')
 
-    def recMsg(self):
+    def recMsgs(self):
         return self.ircSocket.recv(1024)
 
     def printRaw(self):
         self.ircLogger.log('Printing incoming messages...')
         while True:
-            rec = self.recMsg()
+            rec = self.recMsgs()
             if rec:
                 self.ircLogger.log(rec)
 
-    #TODO(mike): update this to work with message tags
+    #TODO(mike): put a try catch somewhere so that multiple messages still
+    #            parsed if one is malformed
     def parseMessages(self, messages):
         prefix = ''
         trailing = []
@@ -60,23 +62,57 @@ class IrcConnection(object):
             for msg in separatedMsgs:
                 if not msg:
                     self.ircLogger.log('Empty line.')
-                elif msg[0] == ':':
-                    prefix, msg = msg[1:].split(' ', 1)
-                    if msg.find(' :') != -1:
-                        msg, trailing = msg.split(' :', 1)
-                        args = msg.split()
-                        args.append(trailing)
-                    else:
-                        args = msg.split()
+                else:
+                    color = ''
+                    emotes = []
+                    subscriber = ''
+                    turbo = ''
+                    userType = ''
+                    #take the tags off the front
+                    if msg[0] == '@':
+                        self.ircLogger.log('Tagged message found.')
 
-                    if len(args) == 0:
-                        self.ircLogger.log('No command in IRC message.')
-                    else:
-                        command = args.pop(0)
+                        tags, msg = msg[1:].split(' ', 1)
+                        color, tags = tags[1:].split(';', 1)
+                        color = color[(color.find('=')+1):]
 
-                    parsedMsgs.append((prefix, command, args))
-                elif msg[0] == '@':
-                    self.ircLogger.log('Tagged message found.')
+                        rawEmotes, tags = tags.split(';', 1)
+                        rawEmotes = rawEmotes[(rawEmotes.find('=')+1):]
+                        #check for empty
+                        if rawEmotes:
+                            splitEmotes = rawEmotes.split('/')
+                            for emoteTag in splitEmotes:
+                                emote, rawIndices = emoteTag.split(':')
+                                splitIndices = rawIndices.split(',')
+                                for indices in splitIndices:
+                                    startIndex, endIndex = indices.split('-')
+                                    emotes.append((emote, startIndex, endIndex))
+
+                        subscriber, tags = tags.split(';', 1)
+                        subscriber = subscriber[(subscriber.find('=')+1):]
+
+                        turbo, tags = tags.split(';', 1)
+                        turbo = turbo[(turbo.find('=')+1):]
+
+                        userType = tags[(tags.find('=')+1):]
+
+                    #then parse the message
+                    if msg[0] == ':':
+                        prefix, msg = msg[1:].split(' ', 1)
+                        if msg.find(' :') != -1:
+                            msg, trailing = msg.split(' :', 1)
+                            args = msg.split()
+                            args.append(trailing)
+                        else:
+                            args = msg.split()
+
+                        if len(args) == 0:
+                            self.ircLogger.log('No command in IRC message.')
+                        else:
+                            command = args.pop(0)
+
+                    parsedMsg = IrcMessage.IrcMessage(color, emotes, subscriber, turbo, userType, prefix, command, args)
+                    parsedMsgs.append(parsedMsg)
         except Exception,e:
             self.ircLogger.log('Error in parseMsg.')
             self.ircLogger.log(e)
@@ -100,13 +136,13 @@ class IrcConnection(object):
         self.sendMsg('JOIN #%s' % channel)
 
         while True:
-            joinResponse = self.recMsg()
+            joinResponse = self.recMsgs()
             if joinResponse:
                 messages = self.parseMessages(joinResponse)
                 for msg in messages:
-                    prefix, command, args = msg
-                    if command == 'JOIN':
-                        if args[0][1:] == channel:
+                    #prefix, command, args = msg
+                    if msg.command == 'JOIN':
+                        if msg.args[0][1:] == channel:
                             self.ircLogger.log('Joined #%s.' % channel)
                             return True
                 if time.time() - channelStartTime >= 1:

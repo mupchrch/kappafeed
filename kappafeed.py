@@ -100,9 +100,6 @@ def startKappaFeed():
 
 #        try:
 #            irc = chatConnect()
-#            while True:
-#                t = raw_input('input:')
-#                irc.send('%s\r\n' % str(t))
 #            channelNames = []
 #            while True:
 #                channelNames = joinChannels(irc)
