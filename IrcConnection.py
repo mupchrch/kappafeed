@@ -48,39 +48,40 @@ class IrcConnection(object):
                 self.ircLogger.log(rec)
 
     #TODO(mike): update this to work with message tags
-    #TODO(mike): check for multiple messages being passed in
-    def parseMsg(self, msg):
+    def parseMessages(self, messages):
         prefix = ''
         trailing = []
         command = 'UNKNOWN'
         args = []
-
-        if not msg:
-            self.ircLogger.log('Empty line in IRC message.')
-            return prefix, command, args
+        parsedMsgs = []
 
         try:
-            if msg[0] == ':':
-                prefix, msg = msg[1:].split(' ', 1)
-                if msg.find(' :') != -1:
-                    msg, trailing = msg.split(' :', 1)
-                    args = msg.split()
-                    args.append(trailing)
-                else:
-                    args = msg.split()
-            elif msg[0] == '@':
-                self.ircLogger.log('Tagged message found.')
-                return prefix, command, args
-        except:
+            separatedMsgs = messages.split('\r\n')
+            for msg in separatedMsgs:
+                if not msg:
+                    self.ircLogger.log('Empty line.')
+                elif msg[0] == ':':
+                    prefix, msg = msg[1:].split(' ', 1)
+                    if msg.find(' :') != -1:
+                        msg, trailing = msg.split(' :', 1)
+                        args = msg.split()
+                        args.append(trailing)
+                    else:
+                        args = msg.split()
+
+                    if len(args) == 0:
+                        self.ircLogger.log('No command in IRC message.')
+                    else:
+                        command = args.pop(0)
+
+                    parsedMsgs.append((prefix, command, args))
+                elif msg[0] == '@':
+                    self.ircLogger.log('Tagged message found.')
+        except Exception,e:
             self.ircLogger.log('Error in parseMsg.')
-            return prefix, command, args
+            self.ircLogger.log(e)
 
-        if len(args) == 0:
-            self.ircLogger.log('No command in IRC message.')
-        else:
-            command = args.pop(0)
-
-        return prefix, command, args
+        return parsedMsgs
 
     #TODO(mike): check this method to see if it can be done cleaner (threads?)
     def joinChannels(self, channels):
@@ -101,12 +102,13 @@ class IrcConnection(object):
         while True:
             joinResponse = self.recMsg()
             if joinResponse:
-                #self.ircLogger.log('Join response: %s' % joinResponse)
-                prefix, command, args = self.parseMsg(joinResponse)
-                if command == 'JOIN':
-                    if args[0][1:] == channel:
-                        self.ircLogger.log('Joined #%s.' % channel)
-                        return True
+                messages = self.parseMessages(joinResponse)
+                for msg in messages:
+                    prefix, command, args = msg
+                    if command == 'JOIN':
+                        if args[0][1:] == channel:
+                            self.ircLogger.log('Joined #%s.' % channel)
+                            return True
                 if time.time() - channelStartTime >= 1:
                     numJoinAttempts += 1
                     if numJoinAttempts == 3:

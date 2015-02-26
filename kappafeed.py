@@ -1,13 +1,13 @@
 import Logger
-#import IrcConnection
+import IrcConnection
 import TwitchApi
 
 #import re
 #import server
-import urllib2
-import json
-import time
-import sys
+#import urllib2
+#import json
+#import time
+#import sys
 #from thread import start_new_thread
 
 apiAddress = "https://api.twitch.tv/kraken/"
@@ -18,13 +18,13 @@ oauthToken = "oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk"
 numChannelsToJoin = 25
 emote = r'Kappa'
 
-def emoteFilter (s, filt):
+#def emoteFilter (s, filt):
     #Finds messages with the specified emote regex in them
-    return filt.search(s)
+#    return filt.search(s)
 
-def logToConsole(s):
-    print '{kf} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
-    sys.stdout.flush()
+#def logToConsole(s):
+#    print '{kf} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
+#    sys.stdout.flush()
 
 #TODO(mike): move this method to ircconnection class?
 #def channelScan(irc):
@@ -88,13 +88,13 @@ def startKappaFeed():
     kfLogger = Logger.Logger('kf')
     kfLogger.log('testing...')
 
-    #irc = IrcConnection.IrcConnection(oauthToken, userName)
-    #irc.connect(serverAddress, portNumber, True)
+    irc = IrcConnection.IrcConnection(oauthToken, userName)
+    irc.connect(serverAddress, portNumber, True)
     twitchApi = TwitchApi.TwitchApi()
-    topChannels = twitchApi.getTopChannels(26)
+    topChannels = twitchApi.getTopChannels(numChannelsToJoin)
 
-    for chan in topChannels:
-        kfLogger.log(chan)
+    irc.joinChannels(topChannels)
+    irc.printRaw()
 
     #start_new_thread(ircListen, (irc.getIrc,))
 
