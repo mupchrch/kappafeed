@@ -1,41 +1,32 @@
+import Logger
+
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import os
-import sys
-import time
-
 from tornado.options import define, options, parse_command_line
 
 define("port", default=80, help="run on the given port", type=int)
 
 clients = []
-
-def logToConsole(s):
-    print '{serv} [' + time.strftime("%Y-%m-%d %H:%M:%S") + '] ' + s
-    sys.stdout.flush()
+servLogger = Logger.Logger('serv')
 
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         self.render("website/index.html")
 
-#class KappaHandler(tornado.web.RequestHandler):
-#   @tornado.web.asynchronous
-#   def get(self):
-#      self.render("static/kappa.png")
-
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-        logToConsole('Client connected.')
+        servLogger.log('Client connect.')
         clients.append(self)
         self.stream.set_nodelay(True)
 
     def on_message(self, message):
-        logToConsole("Received a message : %s" % message)
+        servLogger.log('Received a message: %s' % message)
 
     def on_close(self):
-        logToConsole('Client left.')
+        servLogger.log('Client closed socket.')
         clients.remove(self)
 
 def sendToClients(message):
@@ -43,7 +34,7 @@ def sendToClients(message):
 
     for client in clients:
         if not client.ws_connection.stream.socket:
-            logToConsole("Client left.")
+            servLogger.log('No client available.')
             clients.remove(client)
         else:
             client.write_message(encodedMsg)
@@ -61,7 +52,7 @@ app = tornado.web.Application([
 ],**settings)
 
 def startServer():
-    logToConsole('Starting server...')
+    servLogger.log('Starting server...')
     parse_command_line()
     app.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()

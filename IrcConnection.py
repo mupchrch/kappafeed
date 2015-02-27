@@ -139,7 +139,7 @@ class IrcConnection(object):
         return channels
 
     def joinChannel(self, channel):
-        self.ircLogger.log('Joining %s...' % channel)
+        self.ircLogger.log('Joining #%s...' % channel)
         numJoinAttempts = 0
         channelStartTime = time.time()
 
@@ -184,7 +184,7 @@ class IrcConnection(object):
                                 twitchUser = msg.prefix[:msg.prefix.find('!')]
                                 twitchChannel = msg.args[0]
                                 twitchMsg = msg.args[1].rstrip('\r\n')
-                                ogMsg = twitchMsg
+                                #ogMsg = twitchMsg
                                 #replace all emoticons
                                 offset = 0
                                 for emoteInfo in msg.emotes:
@@ -216,3 +216,32 @@ class IrcConnection(object):
             #check to see if restart necessary
             if time.time() - scanStartTime >= 3600:
                 break
+
+    #returns True if all channels parted, False otherwise
+    def partChannels(self, channels):
+        self.ircLogger.log('Parting channels...')
+        numParted = 0
+        channelsNotParted = []
+        for channel in channels:
+            self.sendMsg('PART %s' % channel)
+            channelPartTime = time.time()
+            numPartAttempts = 0
+            while True:
+                buffer += self.recMsgs()
+                if buffer:
+                    messages, buffer = self.parseMessages(buffer)
+                    for msg in messages:
+                        if msg.command == 'PART':
+                            if msg.args[0] == channel:
+                                self.ircLogger.log('Parted #%s.' % channel)
+                                numParted += 1
+                                break
+                if (time.time() - channelPartTime) >= 1:
+                    numPartAttempts += 1
+                    if numPartAttempts == 3:
+                        self.ircLogger.log('Failed to part channel %s.' % channel)
+                        channelsNotParted.append(channel)
+                        break
+                    self.sendMsg('PART %s' % channel)
+                    channelPartTime = time.time()
+        return channelsNotParted

@@ -1,13 +1,14 @@
 import server
-import kappafeed
+import KappaFeed
 from threading import Thread
 
 def main():
-   serverThread = Thread(target = server.startServer, args = [])
-   serverThread.start()
+    serverThread = Thread(target = server.startServer, args = [])
+    serverThread.start()
 
-   kappaThread = Thread(target = kappafeed.startKappaFeed, args = [])
-   kappaThread.start()
+    kappaFeed = KappaFeed.KappaFeed()
+    kappaThread = Thread(target = kappaFeed.startKappaFeed, args = [])
+    kappaThread.start()
 
 if  __name__ =='__main__':
-   main()
+    main()
