@@ -226,6 +226,7 @@ class IrcConnection(object):
             self.sendMsg('PART %s' % channel)
             channelPartTime = time.time()
             numPartAttempts = 0
+            buffer = ''
             while True:
                 buffer += self.recMsgs()
                 if buffer:
