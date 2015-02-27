@@ -66,18 +66,7 @@ $(function() {
                 kappaMsg += ': </span><span class="message">';
             }
 
-            var indices = findKappas(jsonMsg.msg);
-            kappaCount += indices.length;
-
-            //substitute Kappa faces for "Kappa"
-            var currentIndex = 0;
-            $.each(indices, function(index, value){
-                kappaMsg += jsonMsg.msg.substring(currentIndex,value);
-                kappaMsg += '<span class="emoticon kappa"></span>';
-                currentIndex = value+5;
-            });
-
-            kappaMsg += jsonMsg.msg.substring(currentIndex) + '</span></div>';
+            kappaMsg += jsonMsg.msg;
             printer.append('<div class="msgDiv">' + kappaMsg + '</div>');
 
             scrollBottom();
@@ -93,17 +82,6 @@ $(function() {
         alert('websocket not supported');
     }
 });
-
-/*
- * Finds the "Kappa" strings in the message.
- */
-function findKappas(s){
-    var match, indices = [];
-    while(match = kappaRegex.exec(s)){
-        indices.push(match.index);
-    }
-    return indices;
-}
 
 /*
  * Calculates the KPM in chat.
