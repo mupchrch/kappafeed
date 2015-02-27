@@ -119,7 +119,7 @@ class IrcConnection(object):
                         else:
                             command = args.pop(0)
                     elif msg[:4] == 'PING':
-                        command, args[0] = msg.split(' ')
+                        command, args = msg.split(' ')
 
                     parsedMsg = IrcMessage.IrcMessage(color, emotes, subscriber,
                                                   turbo, userType, prefix,
