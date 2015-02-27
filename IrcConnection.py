@@ -118,6 +118,8 @@ class IrcConnection(object):
                             self.ircLogger.log('No command in IRC message.')
                         else:
                             command = args.pop(0)
+                    elif msg[:4] == 'PING':
+                        command, args[0] = msg.split(' ')
 
                     parsedMsg = IrcMessage.IrcMessage(color, emotes, subscriber,
                                                   turbo, userType, prefix,
@@ -173,6 +175,7 @@ class IrcConnection(object):
         while True:
             buffer += self.recMsgs()
             if buffer:
+                self.ircLogger.log(buffer)
                 messages, buffer = self.parseMessages(buffer)
                 for msg in messages:
                     if msg.command == 'PRIVMSG':
@@ -184,7 +187,6 @@ class IrcConnection(object):
                                 twitchUser = msg.prefix[:msg.prefix.find('!')]
                                 twitchChannel = msg.args[0]
                                 twitchMsg = msg.args[1].rstrip('\r\n')
-                                #ogMsg = twitchMsg
                                 #replace all emoticons
                                 offset = 0
                                 for emoteInfo in msg.emotes:
@@ -205,16 +207,12 @@ class IrcConnection(object):
                                 except:
                                     pass
                                 break
-                                #twitchUser = msg.prefix[:msg.prefix.find('!')]
-                                #twitchChannel = msg.args[0]
-                                #twitchMsg = msg.args[1].rstrip('\r\n')
-                                #self.ircLogger.log('Kappa found: %s' % twitchMsg)
                     elif msg.command == 'PING':
                         self.ircLogger.log('Received PING.')
                         self.ircLogger.log('Sending PONG...')
-                        self.sendMsg('PONG :tmi.twitch.tv')
+                        self.sendMsg('PONG %s' % msg.args[0])
             #check to see if restart necessary
-            if time.time() - scanStartTime >= 3600:
+            if (time.time() - scanStartTime) >= 3600:
                 break
 
     #returns True if all channels parted, False otherwise
