@@ -1,5 +1,6 @@
 import Logger
 import IrcMessage
+import server
 
 import socket
 import time
@@ -48,18 +49,27 @@ class IrcConnection(object):
             if rec:
                 self.ircLogger.log(rec)
 
-    #TODO(mike): put a try catch somewhere so that multiple messages still
-    #            parsed if one is malformed
+    #TODO(mike): break this method up so it is not as massive?
     def parseMessages(self, messages):
         prefix = ''
         trailing = []
         command = 'UNKNOWN'
         args = []
+        splitLines = []
         parsedMsgs = []
+        originalMsg = ''
 
-        try:
-            separatedMsgs = messages.split('\r\n')
-            for msg in separatedMsgs:
+        while True:
+            if '\r\n' in messages:
+                line, messages = messages.split('\r\n', 1)
+                splitLines.append(line)
+            else:
+                break
+
+        #separatedMsgs = messages.split('\r\n')
+        for msg in splitLines:
+            originalMsg = msg
+            try:
                 if not msg:
                     self.ircLogger.log('Empty line.')
                 else:
@@ -70,8 +80,6 @@ class IrcConnection(object):
                     userType = ''
                     #take the tags off the front
                     if msg[0] == '@':
-                        self.ircLogger.log('Tagged message found.')
-
                         tags, msg = msg[1:].split(' ', 1)
                         color, tags = tags[1:].split(';', 1)
                         color = color[(color.find('=')+1):]
@@ -111,13 +119,15 @@ class IrcConnection(object):
                         else:
                             command = args.pop(0)
 
-                    parsedMsg = IrcMessage.IrcMessage(color, emotes, subscriber, turbo, userType, prefix, command, args)
+                    parsedMsg = IrcMessage.IrcMessage(color, emotes, subscriber,
+                                                  turbo, userType, prefix,
+                                                  command, args)
                     parsedMsgs.append(parsedMsg)
-        except Exception,e:
-            self.ircLogger.log('Error in parseMsg.')
-            self.ircLogger.log(e)
+            except Exception,e:
+                self.ircLogger.log('Parse error: %s' % str(e))
+                self.ircLogger.log('MSG: %s' % originalMsg)
 
-        return parsedMsgs
+        return (parsedMsgs, messages)
 
     #TODO(mike): check this method to see if it can be done cleaner (threads?)
     def joinChannels(self, channels):
@@ -135,10 +145,11 @@ class IrcConnection(object):
 
         self.sendMsg('JOIN #%s' % channel)
 
+        buffer = ''
         while True:
-            joinResponse = self.recMsgs()
-            if joinResponse:
-                messages = self.parseMessages(joinResponse)
+            buffer += self.recMsgs()
+            if buffer:
+                messages, buffer = self.parseMessages(buffer)
                 for msg in messages:
                     #prefix, command, args = msg
                     if msg.command == 'JOIN':
@@ -153,3 +164,55 @@ class IrcConnection(object):
                     channelStartTime = time.time()
                     self.sendMsg('JOIN #%s' % channel)
         return False
+
+    def channelScan(self, emoteNum):
+        self.ircLogger.log('Scanning for emote number %s...' % emoteNum)
+
+        buffer = ''
+        scanStartTime = time.time()
+        while True:
+            buffer += self.recMsgs()
+            if buffer:
+                messages, buffer = self.parseMessages(buffer)
+                for msg in messages:
+                    if msg.command == 'PRIVMSG':
+                        #TODO(mike): find emote and replace all other emotes too
+                        #TODO(mike): send to server here?
+                        #search for Kappa
+                        for emo in msg.emotes:
+                            if emo[0] == emoteNum:
+                                twitchUser = msg.prefix[:msg.prefix.find('!')]
+                                twitchChannel = msg.args[0]
+                                twitchMsg = msg.args[1].rstrip('\r\n')
+                                ogMsg = twitchMsg
+                                #replace all emoticons
+                                offset = 0
+                                for emoteInfo in msg.emotes:
+                                    emote, start, end = emoteInfo
+                                    startIndex = int(start) + offset
+                                    endIndex = (int(end) + 1) + offset
+                                    if emote == emoteNum:
+                                        htmlInsert = '<span class="emoticon kappa"></span>'
+                                        twitchMsg = twitchMsg[:startIndex]+htmlInsert+twitchMsg[endIndex:]
+                                        offset += (len(htmlInsert) - (endIndex - startIndex))
+                                    else:
+                                        htmlInsert = 'EMOTE' + emote
+                                        twitchMsg = twitchMsg[:startIndex]+htmlInsert+twitchMsg[endIndex:]
+                                        offset += (len(htmlInsert) - (endIndex - startIndex))
+                                #send to server
+                                try:
+                                    server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': twitchUser.decode('utf8'), 'msg': twitchMsg.decode('utf8')})
+                                except:
+                                    pass
+                                break
+                                #twitchUser = msg.prefix[:msg.prefix.find('!')]
+                                #twitchChannel = msg.args[0]
+                                #twitchMsg = msg.args[1].rstrip('\r\n')
+                                #self.ircLogger.log('Kappa found: %s' % twitchMsg)
+                    elif msg.command == 'PING':
+                        self.ircLogger.log('Received PING.')
+                        self.ircLogger.log('Sending PONG...')
+                        self.sendMsg('PONG :tmi.twitch.tv')
+            #check to see if restart necessary
+            if time.time() - scanStartTime >= 3600:
+                break

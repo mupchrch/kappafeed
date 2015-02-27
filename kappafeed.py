@@ -94,7 +94,7 @@ def startKappaFeed():
     topChannels = twitchApi.getTopChannels(numChannelsToJoin)
 
     irc.joinChannels(topChannels)
-    irc.printRaw()
+    irc.channelScan('25')
 
     #start_new_thread(ircListen, (irc.getIrc,))
 
