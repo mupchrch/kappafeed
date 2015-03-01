@@ -4,11 +4,11 @@ import TwitchApi
 
 class KappaFeed(object):
     def __init__(self):
-        self.apiAddress = "https://api.twitch.tv/kraken/"
-        self.serverAddress = "irc.twitch.tv"
+        self.serverAddress = 'irc.twitch.tv'
+        self.eventServerAddress = '199.9.252.26'
         self.portNumber = 80
-        self.userName = "kappafeed"
-        self.oauthToken = "oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk"
+        self.userName = 'kappafeed'
+        self.oauthToken = 'oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk'
         self.numChannelsToJoin = 25
         self.kfLogger = Logger.Logger('kf')
 
@@ -19,10 +19,24 @@ class KappaFeed(object):
             try:
                 irc = IrcConnection.IrcConnection(self.oauthToken, self.userName)
                 irc.connect(self.serverAddress, self.portNumber, True)
+
+                eventIrc = IrcConnection.IrcConnection(self.oauthToken, self.userName)
+                eventIrc.connect(self.eventServerAddress, self.portNumber, True)
+
                 twitchApi = TwitchApi.TwitchApi()
 
                 while True:
                     topChannels = twitchApi.getTopChannels(self.numChannelsToJoin)
+                    channelsJoined = []
+
+                    #detemine whether to join on event chat or regular
+                    for chan in topChannels:
+                        if twitchApi.getEventChatStatus(chan):
+                            if eventIrc.joinChannel(chan):
+                                channelsJoined.append(chan)
+                        else:
+                            if irc.joinChannel(chan):
+                                channelsJoined.append(chan)
 
                     channelsJoined = irc.joinChannels(topChannels)
                     if len(channelsJoined) == 0:

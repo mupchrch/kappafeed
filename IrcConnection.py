@@ -66,7 +66,6 @@ class IrcConnection(object):
             else:
                 break
 
-        #separatedMsgs = messages.split('\r\n')
         for msg in splitLines:
             originalMsg = msg
             try:
@@ -175,12 +174,9 @@ class IrcConnection(object):
         while True:
             buffer += self.recMsgs()
             if buffer:
-                self.ircLogger.log(buffer)
                 messages, buffer = self.parseMessages(buffer)
                 for msg in messages:
                     if msg.command == 'PRIVMSG':
-                        #TODO(mike): find emote and replace all other emotes too
-                        #TODO(mike): send to server here?
                         #search for Kappa
                         for emo in msg.emotes:
                             if emo[0] == emoteNum:

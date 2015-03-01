@@ -26,3 +26,20 @@ class TwitchApi(object):
                 count += 1
             streamsAddress = twitchJson['_links']['next']
         return topChannels
+
+    def getEventChatStatus(self, channel):
+        self.apiLogger.log('Getting #%s status...' % channel)
+        chatAddress = 'http://api.twitch.tv/api/channels/' + channel + '/chat_properties'
+        rawJson = urllib2.urlopen(chatAddress)
+        twitchJson = json.load(rawJson)
+
+        serverList = []
+
+        if twitchJson['eventchat']:
+            self.apiLogger.log('Event chat is true.')
+            for serv in twitchJson['chat_servers']:
+                serverList.append(serv)
+            #return serverList
+            return True
+        else:
+            return False
