@@ -2,6 +2,8 @@ import Logger
 import IrcConnection
 import TwitchApi
 
+from threading import Thread
+
 class KappaFeed(object):
     def __init__(self):
         self.serverAddress = 'irc.twitch.tv'
@@ -28,23 +30,33 @@ class KappaFeed(object):
                 while True:
                     topChannels = twitchApi.getTopChannels(self.numChannelsToJoin)
                     channelsJoined = []
+                    eventChannelsJoined = []
 
                     #detemine whether to join on event chat or regular
                     for chan in topChannels:
                         if twitchApi.getEventChatStatus(chan):
                             if eventIrc.joinChannel(chan):
-                                channelsJoined.append(chan)
+                                eventChannelsJoined.append(chan)
                         else:
                             if irc.joinChannel(chan):
                                 channelsJoined.append(chan)
 
-                    channelsJoined = irc.joinChannels(topChannels)
-                    if len(channelsJoined) == 0:
-                        break
-                    irc.channelScan('25')
+                    t1 = Thread(target=irc.channelScan, args=['25'])
+                    t2 = Thread(target=eventIrc.channelScan, args=['25'])
+                    t1.start()
+                    t2.start()
+
+                    t1.join()
+                    t2.join()
+
                     channelsNotParted = irc.partChannels(channelsJoined)
                     if len(channelsNotParted) > 0:
                         break
+
+                    eventChannelsNotParted = eventIrc.partChannels(eventChannelsJoined)
+                    if len(eventChannelsNotParted) > 0:
+                        break
+
                     self.kfLogger.log('Refreshing top streams...')
                 self.kfLogger.log('Restarting...')
             except Exception, e:
