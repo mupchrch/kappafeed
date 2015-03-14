@@ -17,6 +17,9 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("website/index.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    def check_origin(self, origin):
+        return True
+
     def open(self):
         servLogger.log('Client connect.')
         clients.append(self)
