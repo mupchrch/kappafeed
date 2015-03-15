@@ -1,16 +1,17 @@
-var kappaRegex = /\bKappa\b/g;
-var kappaCount = 0;
-var kpmArray = []
+//var kappaRegex = /\bKappa\b/g;
+//var kappaCount = 0;
+//var kpmArray = []
 var msgCount = 0;
 var maxNumMsg = 40;
 
 $(function() {
-    var chat = $('.chat'),
-    printer = $('.messages', chat),
-    printerH = printer.innerHeight(),
-    preventNewScroll = false;
+    var chat = $('.chat');
+    var printer = $('.messages', chat);
+    var preventNewScroll = false;
 
     function scrollBottom(){
+        var printerH = print.innerHeight();
+
         if(!preventNewScroll){
             printer.stop().animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600, 'swing', function(){
                 if(msgCount > maxNumMsg){
@@ -38,10 +39,10 @@ $(function() {
 
         ws.onopen = function() {
             msgCount = 0;
-            kappaCount = 0;
-            kpmArray = [];
-            window.setInterval(kappaPerMin, 3000);
-            printer.append('Welcome to kappafeed.');
+            //kappaCount = 0;
+            //kpmArray = [];
+            //window.setInterval(kappaPerMin, 3000);
+            printer.append('<div class="msgDiv">Welcome to kappafeed.</div>');
             scrollBottom();
         };
 
@@ -85,7 +86,7 @@ $(function() {
 /*
  * Calculates the KPM in chat.
  */
-function kappaPerMin(){
+/*function kappaPerMin(){
     var kpm = kappaCount * 20;
     kpmArray.push(kpm);
     if(kpmArray.length > 5){
@@ -99,4 +100,4 @@ function kappaPerMin(){
     avgKpm = Math.round(avgKpm);
     $('div.kpm').text(avgKpm + 'kpm');
     kappaCount = 0;
-}
+}*/
