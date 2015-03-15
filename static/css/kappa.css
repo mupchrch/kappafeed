@@ -26,7 +26,6 @@ div.info{
 
 .chat{
    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-   /*Helvetica, Arial, sans-serif;*/
    margin: 0 auto;
    width: 600px;
    position: fixed;
@@ -35,7 +34,6 @@ div.info{
    right: 0px;
    bottom: 15px;
    overflow: hidden;
-   /*border-radius: 10px;*/
    border: 1px solid #aaa;
    max-height: 750px;
 }
@@ -79,7 +77,6 @@ a.channelLink:visited{
 
 a.userLink{
    display: inline-block;
-   color: red;
    text-decoration: none;
    font-weight: bold;
 }
@@ -89,7 +86,6 @@ a.userLink:hover{
 }
 
 a.userLink:visited{
-   color: red;
    text-decoration: none;
 }
 
@@ -110,7 +106,6 @@ span.channel{
 
 span.user{
    background: #eee;
-   color: red;
 }
 
 span.message{
