@@ -25,7 +25,8 @@ div.info{
 }
 
 .chat{
-   font-family: Helvetica, Arial, sans-serif;
+   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+   /*Helvetica, Arial, sans-serif;*/
    margin: 0 auto;
    width: 600px;
    position: fixed;
@@ -80,6 +81,11 @@ a.userLink{
    display: inline-block;
    color: red;
    text-decoration: none;
+   font-weight: bold;
+}
+
+a.userLink:hover{
+   text-decoration: underline;
 }
 
 a.userLink:visited{

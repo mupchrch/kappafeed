@@ -199,7 +199,7 @@ class IrcConnection(object):
                                         offset += (len(htmlInsert) - (endIndex - startIndex))
                                 #send to server
                                 try:
-                                    server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': twitchUser.decode('utf8'), 'msg': twitchMsg.decode('utf8')})
+                                    server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': {'name': twitchUser.decode('utf8'), 'color': msg.color}, 'msg': twitchMsg.decode('utf8')})
                                 except:
                                     pass
                                 break

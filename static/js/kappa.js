@@ -3,6 +3,7 @@
 //var kpmArray = []
 var msgCount = 0;
 var maxNumMsg = 40;
+var channelNameLen = 10;
 
 $(function() {
     var chat = $('.chat');
@@ -10,7 +11,7 @@ $(function() {
     var preventNewScroll = false;
 
     function scrollBottom(){
-        var printerH = print.innerHeight();
+        var printerH = printer.innerHeight();
 
         if(!preventNewScroll){
             printer.stop().animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600, 'swing', function(){
@@ -50,12 +51,19 @@ $(function() {
             msgCount++;
             var jsonMsg = JSON.parse(evt.data);
 
+            var channel = jsonMsg.channel.substring(1);
+            var shortChannel = channel;
+
+            if(shortChannel.length > channelNameLen){
+                shortChannel = shortChannel.substring(0, channelNameLen) + '...';
+            }
+
             //build the html for channel link
             var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
-	        jsonMsg.channel.substring(1)  + '" target="_blank">' + jsonMsg.channel + '</a></span></div>';
+	            channel + '" target="_blank">' + shortChannel + '</a></span></div>';
             //build the user link
-            kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" href="http://www.twitch.tv/' +
-                jsonMsg.user + '/profile" target="_blank">' + jsonMsg.user + '</a>';
+            kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:' + jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
+                jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name + '</a>';
 
             //if this is an action message, color it green
             if(jsonMsg.msg.substring(1,7) == 'ACTION'){
