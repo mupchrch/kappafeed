@@ -33,9 +33,6 @@ class IrcConnection(object):
             if capResponse:
                 self.ircLogger.log(capResponse)
 
-    #def getIrc(self):
-    #    return self.irc
-
     def sendMsg(self, msg):
         self.ircSocket.send(msg + '\r\n')
 
@@ -93,7 +90,10 @@ class IrcConnection(object):
                                 splitIndices = rawIndices.split(',')
                                 for indices in splitIndices:
                                     startIndex, endIndex = indices.split('-')
-                                    emotes.append((emote, startIndex, endIndex))
+                                    emotes.append((emote, int(startIndex), int(endIndex)))
+                        #need to sort emotes by start index
+                        #have to do in order because of offset
+                        emotes.sort(key=lambda x: x[1])
 
                         subscriber, tags = tags.split(';', 1)
                         subscriber = subscriber[(subscriber.find('=')+1):]
@@ -183,23 +183,27 @@ class IrcConnection(object):
                                 twitchUser = msg.prefix[:msg.prefix.find('!')]
                                 twitchChannel = msg.args[0]
                                 twitchMsg = msg.args[1].rstrip('\r\n')
+                                uTwitchMsg = twitchMsg.decode('utf-8')
                                 #replace all emoticons
                                 offset = 0
                                 for emoteInfo in msg.emotes:
                                     emote, start, end = emoteInfo
-                                    startIndex = int(start) + offset
-                                    endIndex = (int(end) + 1) + offset
+                                    startIndex = start + offset
+                                    endIndex = (end + 1) + offset
+                                    htmlInsert = ''
                                     if emote == emoteNum:
                                         htmlInsert = '<span class="emoticon kappa"></span>'
-                                        twitchMsg = twitchMsg[:startIndex]+htmlInsert+twitchMsg[endIndex:]
-                                        offset += (len(htmlInsert) - (endIndex - startIndex))
                                     else:
                                         htmlInsert = 'EMOTE' + emote
-                                        twitchMsg = twitchMsg[:startIndex]+htmlInsert+twitchMsg[endIndex:]
-                                        offset += (len(htmlInsert) - (endIndex - startIndex))
+                                    uTwitchMsg = uTwitchMsg[:startIndex] + htmlInsert + uTwitchMsg[endIndex:]
+                                    offset += (len(htmlInsert) - (endIndex - startIndex))
+                                    #self.ircLogger.log('num: %s, start: %s, end: %s' % emoteInfo)
+                                    #self.ircLogger.log('offset: %i' % offset)
+                                #self.ircLogger.log('ORIG:: ' + twitchMsg)
+                                #self.ircLogger.log('NEW:: ' + uTwitchMsg)
                                 #send to server
                                 try:
-                                    server.sendToClients({'channel': twitchChannel.decode('utf8'), 'user': {'name': twitchUser.decode('utf8'), 'color': msg.color}, 'msg': twitchMsg.decode('utf8')})
+                                    server.sendToClients({'channel'.decode('utf-8'): twitchChannel.decode('utf-8'), 'user'.decode('utf-8'): {'name'.decode('utf-8'): twitchUser.decode('utf-8'), 'color'.decode('utf-8'): msg.color.decode('utf-8')}, 'msg'.decode('utf-8'): uTwitchMsg.decode('utf-8')})
                                 except:
                                     pass
                                 break
