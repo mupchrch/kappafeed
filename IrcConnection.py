@@ -192,9 +192,10 @@ class IrcConnection(object):
                                     endIndex = (end + 1) + offset
                                     htmlInsert = ''
                                     if emote == emoteNum:
-                                        htmlInsert = '<span class="emoticon kappa"></span>'
+                                        htmlInsert = '<img class="emoticon" src="http://kappafeed.tv/static/images/kappa-md.png" alt="Kappa"></img>'
+                                        #'<span class="emoticon kappa"></span>'
                                     else:
-                                        htmlInsert = 'EMOTE' + emote
+                                        htmlInsert = '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + emote + '/1.0" alt="' + uTwitchMsg[startIndex:endIndex] + '"></img>'
                                     uTwitchMsg = uTwitchMsg[:startIndex] + htmlInsert + uTwitchMsg[endIndex:]
                                     offset += (len(htmlInsert) - (endIndex - startIndex))
                                     #self.ircLogger.log('num: %s, start: %s, end: %s' % emoteInfo)

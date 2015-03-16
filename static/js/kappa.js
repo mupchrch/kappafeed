@@ -43,7 +43,7 @@ $(function() {
             //kappaCount = 0;
             //kpmArray = [];
             //window.setInterval(kappaPerMin, 3000);
-            printer.append('<div class="msgDiv">Welcome to kappafeed.</div>');
+            printer.append('<div class="msgDiv"><div class="serverMsgDiv">Welcome to kappafeed.</div></div>');
             scrollBottom();
         };
 
@@ -81,7 +81,7 @@ $(function() {
         };
 
         ws.onclose = function() {
-            printer.append('Connection closed.');
+            printer.append('<div class="msgDiv"><div class="serverMsgDiv">Connection closed.</div></div>');
             scrollBottom();
         };
 

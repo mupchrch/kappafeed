@@ -16,6 +16,7 @@ div.title{
    display: inline-block;
    background-image: url(http://kappafeed.tv/static/images/kappafeed-logo-straight.png);
    background-size: 280px 80px;
+   background-repeat: no-repeat;
 }
 
 div.info{
@@ -54,19 +55,17 @@ div.info{
 }
 
 .chat .messages > div{
-   padding: 15px;
    border-bottom: 1px solid #999;
-}
-
-.kappa{
-   background-image: url(http://kappafeed.tv/static/images/kappa-md.png);
-   width: 32px;
-   height: 43px;
-   margin: -12px 0;
+   display: table;
+   width: 100%;
+   padding-top: 10px;
+   padding-bottom: 10px;
 }
 
 .emoticon{
    display: inline-block;
+   background-repeat: no-repeat;
+   vertical-align: middle;
 }
 
 a.channelLink{
@@ -94,17 +93,24 @@ a.userLink:visited{
 
 div.channelDiv{
    width: 80px;
-   float: left;
+   display: table-cell;
+   vertical-align: middle;
+   padding-left: 15px;
 }
 
 div.userMsgDiv{
-   display: block;
-   margin-left: 80px;
+   display: table-cell;
+   padding-right: 15px;
+}
+
+div.serverMsgDiv{
+   display: table-cell;
+   padding-left: 15px;
+   padding-right: 15px;
 }
 
 span.channel{
    font-size: 10px;
-   line-height: 30px;
 }
 
 span.user{
