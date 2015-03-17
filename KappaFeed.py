@@ -1,7 +1,7 @@
 import Logger
 import IrcConnection
 import TwitchApi
-#import server
+import server
 
 from threading import Thread
 
@@ -14,6 +14,8 @@ class KappaFeed(object):
         self.oauthToken = 'oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk'
         self.numChannelsToJoin = 25
         self.kfLogger = Logger.Logger('kf')
+        self.refreshMsg = {'serverMsg'.decode('utf-8'):
+                           'Refreshing top streams. One moment.'.decode('utf-8')}
 
     def startKappaFeed(self):
         self.kfLogger.log('kappafeed starting...')
@@ -24,11 +26,10 @@ class KappaFeed(object):
                 eventIrcInstantiated = False;
 
                 irc = IrcConnection.IrcConnection(self.oauthToken, self.userName)
-
                 eventIrc = IrcConnection.IrcConnection(self.oauthToken, self.userName)
 
                 twitchApi = TwitchApi.TwitchApi()
-                #server.sendToClients({'serverMsg': 'Refreshing top streams list. One moment.'})
+
                 while True:
                     topChannels = twitchApi.getTopChannels(self.numChannelsToJoin)
                     channelsJoined = []
@@ -72,8 +73,9 @@ class KappaFeed(object):
                             break
 
                     self.kfLogger.log('Refreshing top streams...')
+                    server.sendToClients(self.refreshMsg)
                 self.kfLogger.log('Restarting...')
-                #server.sendToClients({'serverMsg': 'Refreshing top streams list. One moment.'})
+                server.sendToClients(self.refreshMsg)
             except Exception, e:
                 self.kfLogger.log('Error, restarting... %s' % str(e))
-                #server.sendToClients({'serverMsg': 'Refreshing top streams list. One moment.'})
+                server.sendToClients(self.refreshMsg)
