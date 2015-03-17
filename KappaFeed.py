@@ -1,7 +1,7 @@
 import Logger
 import IrcConnection
 import TwitchApi
-import server
+#import server
 
 from threading import Thread
 
