@@ -54,33 +54,16 @@ $(function() {
         ws.onmessage = function (evt) {
             msgCount++;
             var jsonMsg = JSON.parse(evt.data);
-
-            var channel = jsonMsg.channel.substring(1);
-            var shortChannel = channel;
-
-            if(shortChannel.length > channelNameLen){
-                shortChannel = shortChannel.substring(0, channelNameLen) + '...';
+            var parsedMsg = '';
+            
+            if(jsonMsg.channel){
+            	parsedMsg = parseKappaMsg(jsonMsg);
             }
-
-            //build the html for channel link
-            var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
-	            channel + '" target="_blank">' + shortChannel + '</a></span></div>';
-            //build the user link
-            kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:' + jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
-                jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name + '</a>';
-
-            //if this is an action message, color it green
-            if(jsonMsg.msg.content.substring(1,7) == 'ACTION'){
-                kappaMsg += ' </span><span class="action">';
-                jsonMsg.msg.content = jsonMsg.msg.content.substring(7);
+            else if(jsonMsg.serverMsg){
+            	parsedMsg = '<div class="msgDiv"><div class="serverMsgDiv">' + jsonMsg.serverMsg + '</div></div>'
             }
-            else{
-                kappaMsg += ': </span><span class="message">';
-            }
-            kappaMsg += jsonMsg.msg.content;
-
-            printer.append('<div class="msgDiv">' + kappaMsg + '</div>');
-            kappaCount += jsonMsg.msg.emoteCount;
+            
+            printer.append(parsedMsg);
             scrollBottom();
         };
 
@@ -94,6 +77,38 @@ $(function() {
         alert('websocket not supported');
     }
 });
+
+/*
+ * Parses a kappa-filled json message from server.
+ */
+function parseKappaMsg(jsonMsg){
+    var channel = jsonMsg.channel.substring(1);
+    var shortChannel = channel;
+
+    if(shortChannel.length > channelNameLen){
+        shortChannel = shortChannel.substring(0, channelNameLen) + '...';
+    }
+
+    //build the html for channel link
+    var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
+         channel + '" target="_blank">' + shortChannel + '</a></span></div>';
+    //build the user link
+    kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:' + jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
+        jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name + '</a>';
+
+    //if this is an action message, color it green
+    if(jsonMsg.msg.content.substring(1,7) == 'ACTION'){
+        kappaMsg += ' </span><span class="action">';
+        jsonMsg.msg.content = jsonMsg.msg.content.substring(7);
+    }
+    else{
+        kappaMsg += ': </span><span class="message">';
+    }
+    kappaMsg += jsonMsg.msg.content;
+    kappaCount += jsonMsg.msg.emoteCount;
+    
+    return '<div class="msgDiv">' + kappaMsg + '</div>';
+}
 
 /*
  * Calculates the KPM in chat.
