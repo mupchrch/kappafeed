@@ -176,6 +176,7 @@ class IrcConnection(object):
             if buffer:
                 messages, buffer = self.parseMessages(buffer)
                 for msg in messages:
+                    emoteCount = 0
                     if msg.command == 'PRIVMSG':
                         #search for Kappa
                         for emo in msg.emotes:
@@ -193,18 +194,26 @@ class IrcConnection(object):
                                     htmlInsert = ''
                                     if emote == emoteNum:
                                         htmlInsert = '<img class="emoticon" src="http://kappafeed.tv/static/images/kappa-md.png" alt="Kappa"></img>'
-                                        #'<span class="emoticon kappa"></span>'
+                                        emoteCount += 1
                                     else:
                                         htmlInsert = '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + emote + '/1.0" alt="' + uTwitchMsg[startIndex:endIndex] + '"></img>'
                                     uTwitchMsg = uTwitchMsg[:startIndex] + htmlInsert + uTwitchMsg[endIndex:]
                                     offset += (len(htmlInsert) - (endIndex - startIndex))
-                                    #self.ircLogger.log('num: %s, start: %s, end: %s' % emoteInfo)
-                                    #self.ircLogger.log('offset: %i' % offset)
-                                #self.ircLogger.log('ORIG:: ' + twitchMsg)
-                                #self.ircLogger.log('NEW:: ' + uTwitchMsg)
                                 #send to server
                                 try:
-                                    server.sendToClients({'channel'.decode('utf-8'): twitchChannel.decode('utf-8'), 'user'.decode('utf-8'): {'name'.decode('utf-8'): twitchUser.decode('utf-8'), 'color'.decode('utf-8'): msg.color.decode('utf-8')}, 'msg'.decode('utf-8'): uTwitchMsg.decode('utf-8')})
+                                    server.sendToClients(
+                                        {'channel'.decode('utf-8'):
+                                         twitchChannel.decode('utf-8'),
+                                         'user'.decode('utf-8'):
+                                            {'name'.decode('utf-8'):
+                                            twitchUser.decode('utf-8'),
+                                            'color'.decode('utf-8'):
+                                            msg.color.decode('utf-8')},
+                                         'msg'.decode('utf-8'):
+                                            {'content'.decode('utf-8'):
+                                            uTwitchMsg.decode('utf-8'),
+                                            'emoteCount'.decode('utf-8'):
+                                            emoteCount}})
                                 except:
                                     pass
                                 break

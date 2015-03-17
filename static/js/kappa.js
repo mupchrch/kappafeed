@@ -1,9 +1,9 @@
-//var kappaRegex = /\bKappa\b/g;
-//var kappaCount = 0;
-//var kpmArray = []
-var msgCount = 0;
-var maxNumMsg = 40;
-var channelNameLen = 10;
+var kappaCount;
+var kpmArray;
+var msgCount;
+var maxNumMsg;
+var channelNameLen;
+var kappaPollRate;
 
 $(function() {
     var chat = $('.chat');
@@ -39,10 +39,14 @@ $(function() {
         var ws = new WebSocket(wsPath);
 
         ws.onopen = function() {
-            msgCount = 0;
-            //kappaCount = 0;
-            //kpmArray = [];
-            //window.setInterval(kappaPerMin, 3000);
+            kappaCount = 0;
+            msgCount = 0; //number of messages in chat
+            maxNumMsg = 40; //number of messages chat will hold before removal
+            kpmArray = []; //keeps a few kpm measurements for smooth averaging
+            channelNameLen = 10; //max length of a channel name before shortened
+            kappaPollRate = 1.7; //seconds between each poll
+
+            window.setInterval(kappaPerMin, kappaPollRate * 1000);
             printer.append('<div class="msgDiv"><div class="serverMsgDiv">Welcome to kappafeed.</div></div>');
             scrollBottom();
         };
@@ -66,17 +70,17 @@ $(function() {
                 jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name + '</a>';
 
             //if this is an action message, color it green
-            if(jsonMsg.msg.substring(1,7) == 'ACTION'){
+            if(jsonMsg.msg.content.substring(1,7) == 'ACTION'){
                 kappaMsg += ' </span><span class="action">';
-                jsonMsg.msg = jsonMsg.msg.substring(7);
+                jsonMsg.msg.content = jsonMsg.msg.content.substring(7);
             }
             else{
                 kappaMsg += ': </span><span class="message">';
             }
+            kappaMsg += jsonMsg.msg.content;
 
-            kappaMsg += jsonMsg.msg;
             printer.append('<div class="msgDiv">' + kappaMsg + '</div>');
-
+            kappaCount += jsonMsg.msg.emoteCount;
             scrollBottom();
         };
 
@@ -94,18 +98,20 @@ $(function() {
 /*
  * Calculates the KPM in chat.
  */
-/*function kappaPerMin(){
-    var kpm = kappaCount * 20;
+function kappaPerMin(){
+    var kpm = kappaCount * (60/kappaPollRate);
     kpmArray.push(kpm);
     if(kpmArray.length > 5){
         kpmArray.shift();
     }
+
     var avgKpm = 0;
     for(var i=0; i<kpmArray.length; i++){
         avgKpm += kpmArray[i];
     }
     avgKpm /= kpmArray.length;
     avgKpm = Math.round(avgKpm);
+
     $('div.kpm').text(avgKpm + 'kpm');
     kappaCount = 0;
-}*/
+}
