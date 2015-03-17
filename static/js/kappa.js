@@ -112,7 +112,8 @@ function kappaPerMin(){
     avgKpm /= kpmArray.length;
     avgKpm = Math.round(avgKpm);
 
-    $('div.kpm').text(avgKpm + 'kpm');
+    var curKpm = parseInt($('div.kpm').text().replace('kpm', ''));
+    gradualIncrease(curKpm, avgKpm, (kappaPollRate-0.2)*1000, 100);
     kappaCount = 0;
 }
 
@@ -124,15 +125,15 @@ function gradualIncrease(startNum, endNum, time, updateRate){
     var numUpdates = Math.ceil(time / updateRate);
     //amount to increase value by each update:
     var increaseAmt = (endNum - startNum) / numUpdates;
-        
+
     var value = startNum;
     var numIncreases = 0;        
     var intervalId = window.setInterval(updateValue, updateRate);
-        
+
     function updateValue(){
         value += increaseAmt;
         numIncreases++;
-        $('div.kpm').text(value.toFixed(0));
+        $('div.kpm').text(value.toFixed(0) + 'kpm');
 
         if(numIncreases >= numUpdates){
             window.clearInterval(intervalId);
