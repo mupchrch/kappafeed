@@ -93,12 +93,15 @@ function parseKappaMsg(jsonMsg){
     var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
          channel + '" target="_blank">' + shortChannel + '</a></span></div>';
     //build the user link
-    kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:' + jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
-        jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name + '</a>';
+    kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:'+
+        jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
+        jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name +
+        '</a>';
 
     //if this is an action message, color it green
     if(jsonMsg.msg.content.substring(1,7) == 'ACTION'){
-        kappaMsg += ' </span><span class="action">';
+        kappaMsg += ' </span><span class="action" style="color:' +
+            jsonMsg.user.color + '">';
         jsonMsg.msg.content = jsonMsg.msg.content.substring(7);
     }
     else{

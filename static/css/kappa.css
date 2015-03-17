@@ -128,7 +128,6 @@ span.message{
 span.action{
    background: #eee;
    display: inline;
-   color: green;
    font-size: 1em;
    line-height: 30px;
 }
