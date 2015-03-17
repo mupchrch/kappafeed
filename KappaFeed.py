@@ -5,10 +5,11 @@ import server
 
 from threading import Thread
 
+#TODO(mike): add support for the situation where event server IP changes
 class KappaFeed(object):
     def __init__(self):
         self.serverAddress = 'irc.twitch.tv'
-        self.eventServerAddress = '199.9.252.26'
+        self.eventServerAddress = '192.16.64.143'
         self.portNumber = 80
         self.userName = 'kappafeed'
         self.oauthToken = 'oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk'
