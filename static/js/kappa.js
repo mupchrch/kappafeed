@@ -115,3 +115,27 @@ function kappaPerMin(){
     $('div.kpm').text(avgKpm + 'kpm');
     kappaCount = 0;
 }
+
+/*
+ * Animates the kpm meter in between updates.
+ */
+function gradualIncrease(startNum, endNum, time, updateRate){
+    //number of times to update value in time frame:
+    var numUpdates = Math.ceil(time / updateRate);
+    //amount to increase value by each update:
+    var increaseAmt = (endNum - startNum) / numUpdates;
+        
+    var value = startNum;
+    var numIncreases = 0;        
+    var intervalId = window.setInterval(updateValue, updateRate);
+        
+    function updateValue(){
+        value += increaseAmt;
+        numIncreases++;
+        $('div.kpm').text(value.toFixed(0));
+
+        if(numIncreases >= numUpdates){
+            window.clearInterval(intervalId);
+        }
+    }
+}
