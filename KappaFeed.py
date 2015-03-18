@@ -42,20 +42,20 @@ class KappaFeed(object):
                             if eventIrcInstantiated == False:
                                 eventIrc.connect(self.eventServerAddress, self.portNumber, True)
                                 eventIrcInstantiated = True
-                            if eventIrc.joinChannel(chan):
+                            if eventIrc.joinPartChannel('JOIN', chan):
                                 eventChannelsJoined.append(chan)
                         else:
                             if ircInstantiated == False:
                                 irc.connect(self.serverAddress, self.portNumber, True)
                                 ircInstantiated = True
-                            if irc.joinChannel(chan):
+                            if irc.joinPartChannel('JOIN', chan):
                                 channelsJoined.append(chan)
 
                     if ircInstantiated:
-                        t1 = Thread(target=irc.channelScan, args=['25'])
+                        t1 = Thread(target=irc.channelScan, args=['25', 3600])
                         t1.start()
                     if eventIrcInstantiated:
-                        t2 = Thread(target=eventIrc.channelScan, args=['25'])
+                        t2 = Thread(target=eventIrc.channelScan, args=['25', 3600])
                         t2.start()
 
                     if ircInstantiated:
@@ -64,14 +64,13 @@ class KappaFeed(object):
                         t2.join()
 
                     if ircInstantiated:
-                        channelsNotParted = irc.partChannels(channelsJoined)
-                        if len(channelsNotParted) > 0:
-                            break
-
+                        for chan in channelsJoined:
+                            if irc.joinPartChannel('PART', chan) == False:
+                                break
                     if eventIrcInstantiated:
-                        eventChannelsNotParted = eventIrc.partChannels(eventChannelsJoined)
-                        if len(eventChannelsNotParted) > 0:
-                            break
+                        for eChan in eventChannelsJoined:
+                            if irc.joinPartChannel('PART', eChan) == False:
+                                break
 
                     self.kfLogger.log('Refreshing top streams...')
                     server.sendToClients(self.refreshMsg)

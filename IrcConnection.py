@@ -130,43 +130,8 @@ class IrcConnection(object):
 
         return (parsedMsgs, messages)
 
-    #TODO(mike): check this method to see if it can be done cleaner (threads?)
-    def joinChannels(self, channels):
-        self.ircLogger.log('Joining channels...')
-        for channel in channels:
-            joinStatus = self.joinChannel(channel)
-            if not joinStatus:
-                channels.remove(channel)
-        return channels
-
-    def joinChannel(self, channel):
-        self.ircLogger.log('Joining #%s...' % channel)
-        numJoinAttempts = 0
-        channelStartTime = time.time()
-
-        self.sendMsg('JOIN #%s' % channel)
-
-        buffer = ''
-        while True:
-            buffer += self.recMsgs()
-            if buffer:
-                messages, buffer = self.parseMessages(buffer)
-                for msg in messages:
-                    #prefix, command, args = msg
-                    if msg.command == 'JOIN':
-                        if msg.args[0][1:] == channel:
-                            self.ircLogger.log('Joined #%s.' % channel)
-                            return True
-                if time.time() - channelStartTime >= 1:
-                    numJoinAttempts += 1
-                    if numJoinAttempts == 3:
-                        self.ircLogger.log('Failed to join #%s.' % channel)
-                        return False
-                    channelStartTime = time.time()
-                    self.sendMsg('JOIN #%s' % channel)
-        return False
-
-    def channelScan(self, emoteNum):
+    #scans all channels for the emote 'emoteNum' for a period of time 'timeLen'
+    def channelScan(self, emoteNum, timeLen):
         self.ircLogger.log('Scanning for emote number %s...' % emoteNum)
 
         buffer = ''
@@ -222,35 +187,31 @@ class IrcConnection(object):
                         self.ircLogger.log('Sending PONG...')
                         self.sendMsg('PONG %s' % msg.args[0])
             #check to see if restart necessary
-            if (time.time() - scanStartTime) >= 3600:
+            if (time.time() - scanStartTime) >= timeLen:
                 break
 
-    #returns True if all channels parted, False otherwise
-    def partChannels(self, channels):
-        self.ircLogger.log('Parting channels...')
-        numParted = 0
-        channelsNotParted = []
-        for channel in channels:
-            self.sendMsg('PART %s' % channel)
-            channelPartTime = time.time()
-            numPartAttempts = 0
-            buffer = ''
-            while True:
-                buffer += self.recMsgs()
-                if buffer:
-                    messages, buffer = self.parseMessages(buffer)
-                    for msg in messages:
-                        if msg.command == 'PART':
-                            if msg.args[0] == channel:
-                                self.ircLogger.log('Parted #%s.' % channel)
-                                numParted += 1
-                                break
-                if (time.time() - channelPartTime) >= 1:
-                    numPartAttempts += 1
-                    if numPartAttempts == 3:
-                        self.ircLogger.log('Failed to part channel %s.' % channel)
-                        channelsNotParted.append(channel)
-                        break
-                    self.sendMsg('PART %s' % channel)
-                    channelPartTime = time.time()
-        return channelsNotParted
+    #joins or parts a channel according to the action string
+    def joinPartChannel(self, action, channel):
+        self.ircLogger.log('%sing #%s...' % (action, channel))
+        self.sendMsg('%s #%s' % (action, channel))
+        chanJoinPartTime = time.time()
+        numJoinPartAttempts = 0
+
+        buffer = ''
+        while True:
+            buffer += self.recMsgs()
+            if buffer:
+                messages, buffer = self.parseMessages(buffer)
+                for msg in messages:
+                    if msg.command == action:
+                        if msg.args[0][1:] == channel:
+                            self.ircLogger.log('%sed #%s.' % (action, channel))
+                            return True
+            if (time.time() - chanJoinPartTime) >= 1:
+                numJoinPartAttempts += 1
+                if numJoinPartAttempts == 3:
+                    self.ircLogger.log('Failed to %s channel #%s.' % (action, channel))
+                    return False
+                self.sendMsg('%s #%s' % (action, channel))
+                chanJoinPartTime = time.time()
+        return False

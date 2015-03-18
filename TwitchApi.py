@@ -9,6 +9,7 @@ class TwitchApi(object):
         self.address = 'https://api.twitch.tv/kraken/'
         self.apiLogger = Logger.Logger('api')
 
+    #gets the names of the top n streams
     def getTopChannels(self, numChannels):
         self.apiLogger.log('Getting top streams...')
         streamsAddress = self.address + 'streams'
@@ -27,8 +28,9 @@ class TwitchApi(object):
             streamsAddress = twitchJson['_links']['next']
         return topChannels
 
+    #true if channel has event chat server, false for normal chat server
     def getEventChatStatus(self, channel):
-        self.apiLogger.log('Getting #%s status...' % channel)
+        self.apiLogger.log('Getting #%s event chat status...' % channel)
         chatAddress = 'http://api.twitch.tv/api/channels/' + channel + '/chat_properties'
         rawJson = urllib2.urlopen(chatAddress)
         twitchJson = json.load(rawJson)
