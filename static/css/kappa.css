@@ -141,3 +141,25 @@ div.kpm-web{
    font-weight: bold;
    display: inline-block;
 }
+
+.scrollPopup{
+   height: 60px;
+   width: 100%;
+   position: absolute;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.7);
+   cursor: pointer;
+   text-align: center;
+   display: table;
+   -webkit-backface-visibility: hidden;
+   -webkit-transition: opacity 0.2s ease-in-out;
+   transition: opacity 0.2s ease-in-out;
+   opacity: 0;
+   z-index: -1;
+}
+
+.scrollPopupText{
+  display: table-cell;
+  vertical-align: middle;
+  color: white;
+}

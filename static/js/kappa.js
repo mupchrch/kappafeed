@@ -6,32 +6,51 @@ var channelNameLen;
 var kappaPollRate;
 
 $(function() {
+    var autoScrolling = false;
+
+    $('.scrollPopup').on('click', function(){
+        $(this).css('opacity', 0);
+        $(this).css('z-index', -1);
+        preventNewScroll = false;
+        scrollBottom();
+    });
+
+    $('.messages').on('scroll', function(){
+        if(!autoScrolling){
+            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+                $('.scrollPopup').css('opacity', 0);
+                $('.scrollPopup').css('z-index', -1);
+                preventNewScroll = false;
+            }
+            else{
+                $('.scrollPopup').css('z-index', 1);
+                $('.scrollPopup').css('opacity', 1);
+                preventNewScroll = true;
+            }
+        }
+    });
+
     var chat = $('.chat');
     var printer = $('.messages', chat);
     var preventNewScroll = false;
 
+    /*
+     * Scrolls the chat to the bottom automatically.
+     */
     function scrollBottom(){
-        var printerH = printer.innerHeight();
-
         if(!preventNewScroll){
-            printer.stop().animate( {scrollTop: printer[0].scrollHeight - printerH  }, 600, 'swing', function(){
+            autoScrolling = true;
+            printer.stop().animate( {scrollTop: printer[0].scrollHeight - printer.innerHeight()  }, 200, 'swing', function(){
                 if(msgCount > maxNumMsg){
                     for(var i=maxNumMsg; i<msgCount; i++){
                         $(printer).find('div').first().remove();
                     }
                     msgCount -= (i-maxNumMsg);
                 }
+                autoScrolling = false;
             });
         }
     }
-
-    scrollBottom();
-
-    //if mouse over chat, stop scrolling
-    printer.hover(function( e ) {
-        preventNewScroll = e.type=='mouseenter' ? true : false ;
-        if(!preventNewScroll){ scrollBottom(); }
-    });
 
     //check for websocket support
     if ("WebSocket" in window) {
