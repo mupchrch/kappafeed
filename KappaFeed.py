@@ -3,6 +3,7 @@ import IrcConnection
 import TwitchApi
 import server
 
+import os
 from threading import Thread
 
 #TODO(mike): add support for the situation where event server IP changes
@@ -12,7 +13,7 @@ class KappaFeed(object):
         self.eventServerAddress = '192.16.64.143'
         self.portNumber = 80
         self.userName = 'kappafeed'
-        self.oauthToken = 'oauth:pf7dk9qchza0f0v64c34hp5zb8p4fk'
+        self.oauthToken = os.environ['OAUTH']
         self.numChannelsToJoin = 25
         self.kfLogger = Logger.Logger('kf')
         self.refreshMsg = {'serverMsg'.decode('utf-8'):

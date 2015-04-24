@@ -30,7 +30,7 @@ class TwitchApi(object):
 
     #true if channel has event chat server, false for normal chat server
     def getEventChatStatus(self, channel):
-        self.apiLogger.log('Getting #%s event chat status...' % channel)
+        #self.apiLogger.log('Getting #%s event chat status...' % channel)
         chatAddress = 'http://api.twitch.tv/api/channels/' + channel + '/chat_properties'
         rawJson = urllib2.urlopen(chatAddress)
         twitchJson = json.load(rawJson)

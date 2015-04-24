@@ -74,14 +74,23 @@ class IrcConnection(object):
                     subscriber = ''
                     turbo = ''
                     userType = ''
+                    #displayName = ''
                     #take the tags off the front
                     if msg[0] == '@':
-                        tags, msg = msg[1:].split(' ', 1)
-                        color, tags = tags[1:].split(';', 1)
-                        color = color[(color.find('=')+1):]
+                        tags = {}
+                        rawTags, msg = msg[1:].split(' ', 1)
+                        rawTags = rawTags.split(';')
+                        for rawTag in rawTags:
+                            tag, value = rawTag.split('=', 1)
+                            tags[tag] = value
 
-                        rawEmotes, tags = tags.split(';', 1)
-                        rawEmotes = rawEmotes[(rawEmotes.find('=')+1):]
+                        color = tags['color']
+                        subscriber = tags['subscriber']
+                        turbo = tags['turbo']
+                        userType = tags['user-type']
+                        #displayName = tags['display-name']
+
+                        rawEmotes = tags['emotes']
                         #check for empty
                         if rawEmotes:
                             splitEmotes = rawEmotes.split('/')
@@ -94,14 +103,6 @@ class IrcConnection(object):
                         #need to sort emotes by start index
                         #have to do in order because of offset
                         emotes.sort(key=lambda x: x[1])
-
-                        subscriber, tags = tags.split(';', 1)
-                        subscriber = subscriber[(subscriber.find('=')+1):]
-
-                        turbo, tags = tags.split(';', 1)
-                        turbo = turbo[(turbo.find('=')+1):]
-
-                        userType = tags[(tags.find('=')+1):]
 
                     #then parse the message
                     if msg[0] == ':':
@@ -192,7 +193,7 @@ class IrcConnection(object):
 
     #joins or parts a channel according to the action string
     def joinPartChannel(self, action, channel):
-        self.ircLogger.log('%sing #%s...' % (action, channel))
+        #self.ircLogger.log('%sing #%s...' % (action, channel))
         self.sendMsg('%s #%s' % (action, channel))
         chanJoinPartTime = time.time()
         numJoinPartAttempts = 0
