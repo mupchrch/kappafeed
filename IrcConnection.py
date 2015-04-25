@@ -147,10 +147,16 @@ class IrcConnection(object):
                         #search for Kappa
                         for emo in msg.emotes:
                             if emo[0] == emoteNum:
+                                actionStr = ''
                                 twitchUser = msg.prefix[:msg.prefix.find('!')]
                                 twitchChannel = msg.args[0]
                                 twitchMsg = msg.args[1].rstrip('\r\n')
                                 uTwitchMsg = twitchMsg.decode('utf-8')
+                                #check if this is an action msg
+                                if uTwitchMsg[:7] == '\x01ACTION':
+                                    uTwitchMsg = uTwitchMsg.strip('\x01')
+                                    actionStr, uTwitchMsg = uTwitchMsg.split(' ', 1)
+
                                 #replace all emoticons
                                 offset = 0
                                 for emoteInfo in msg.emotes:
@@ -165,7 +171,10 @@ class IrcConnection(object):
                                         htmlInsert = '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + emote + '/1.0" alt="' + uTwitchMsg[startIndex:endIndex] + '"></img>'
                                     uTwitchMsg = uTwitchMsg[:startIndex] + htmlInsert + uTwitchMsg[endIndex:]
                                     offset += (len(htmlInsert) - (endIndex - startIndex))
-                                #send to server
+
+                                #add 'ACTION' to front of msg if it is action
+                                uTwitchMsg = actionStr + ' ' + uTwitchMsg
+                                #send to clients
                                 try:
                                     server.sendToClients(
                                         {'channel'.decode('utf-8'):

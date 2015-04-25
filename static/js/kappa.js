@@ -118,7 +118,7 @@ function parseKappaMsg(jsonMsg){
         '</a>';
 
     //if this is an action message, color it green
-    if(jsonMsg.msg.content.substring(1,7) == 'ACTION'){
+    if(jsonMsg.msg.content.substring(0,6) == 'ACTION'){
         kappaMsg += ' </span><span class="action" style="color:' +
             jsonMsg.user.color + '">';
         jsonMsg.msg.content = jsonMsg.msg.content.substring(7);
