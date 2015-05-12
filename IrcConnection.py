@@ -27,7 +27,7 @@ class IrcConnection(object):
 
         if useTags:
             time.sleep(1)
-            self.ircLogger.log('Sending capability request...')
+            #self.ircLogger.log('Sending capability request...')
             self.sendMsg('CAP REQ :twitch.tv/tags')
             capResponse = self.recMsgs()
             if capResponse:
@@ -133,7 +133,7 @@ class IrcConnection(object):
 
     #scans all channels for the emote 'emoteNum' for a period of time 'timeLen'
     def channelScan(self, emoteNum, timeLen):
-        self.ircLogger.log('Scanning for emote number %s...' % emoteNum)
+        #self.ircLogger.log('Scanning for emote number %s...' % emoteNum)
 
         buffer = ''
         scanStartTime = time.time()
@@ -193,8 +193,8 @@ class IrcConnection(object):
                                     pass
                                 break
                     elif msg.command == 'PING':
-                        self.ircLogger.log('Received PING.')
-                        self.ircLogger.log('Sending PONG...')
+                        #self.ircLogger.log('Received PING.')
+                        #self.ircLogger.log('Sending PONG...')
                         self.sendMsg('PONG %s' % msg.args[0])
             #check to see if restart necessary
             if (time.time() - scanStartTime) >= timeLen:
@@ -215,7 +215,7 @@ class IrcConnection(object):
                 for msg in messages:
                     if msg.command == action:
                         if msg.args[0][1:] == channel:
-                            self.ircLogger.log('%sed #%s.' % (action, channel))
+                            #self.ircLogger.log('%sed #%s.' % (action, channel))
                             return True
             if (time.time() - chanJoinPartTime) >= 1:
                 numJoinPartAttempts += 1

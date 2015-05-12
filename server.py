@@ -21,7 +21,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        servLogger.log('Client connect.')
+        servLogger.log('Client connect. Total: ' + str((len(clients)+1)))
         clients.append(self)
         self.stream.set_nodelay(True)
 
@@ -29,7 +29,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         servLogger.log('Received a message: %s' % message)
 
     def on_close(self):
-        servLogger.log('Client closed socket.')
+        servLogger.log('Client closed socket. Total: ' + str((len(clients)-1)))
         clients.remove(self)
 
 def sendToClients(message):
@@ -37,7 +37,7 @@ def sendToClients(message):
 
     for client in clients:
         if not client.ws_connection.stream.socket:
-            servLogger.log('No client available.')
+            servLogger.log('Client unavailable.')
             clients.remove(client)
         else:
             client.write_message(encodedMsg)
