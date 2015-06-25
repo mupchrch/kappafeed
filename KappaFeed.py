@@ -11,7 +11,7 @@ class KappaFeed(object):
     def __init__(self):
         self.serverAddress = 'irc.twitch.tv'
         self.eventServerAddress = '192.16.64.143'
-        self.portNumber = 80
+        self.portNumber = 6667
         self.userName = 'kappafeed'
         self.oauthToken = os.environ['OAUTH']
         self.numChannelsToJoin = 25
