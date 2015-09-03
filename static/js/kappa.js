@@ -54,7 +54,7 @@ $(function() {
 
     //check for websocket support
     if ("WebSocket" in window) {
-        var wsPath = 'ws://kappafeed.tv/feed';
+        var wsPath = 'ws://kappafeed.com/feed';
         var ws = new WebSocket(wsPath);
 
         ws.onopen = function() {
