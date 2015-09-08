@@ -165,7 +165,7 @@ class IrcConnection(object):
                                     endIndex = (end + 1) + offset
                                     htmlInsert = ''
                                     if emote == emoteNum:
-                                        htmlInsert = '<img class="emoticon" src="http://kappafeed.tv/static/images/kappa-md.png" alt="Kappa"></img>'
+                                        htmlInsert = '<img class="emoticon" src="http://kappafeed.com/static/images/kappa-md.png" alt="Kappa"></img>'
                                         emoteCount += 1
                                     else:
                                         htmlInsert = '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + emote + '/1.0" alt="' + uTwitchMsg[startIndex:endIndex] + '"></img>'
