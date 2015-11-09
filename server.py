@@ -30,7 +30,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         servLogger.log('Client closed socket. Total: ' + str((len(clients)-1)))
-        clients.remove(self)
+        if self in clients:
+            clients.remove(self)
 
 def sendToClients(message):
     encodedMsg = tornado.escape.json_encode(message)
