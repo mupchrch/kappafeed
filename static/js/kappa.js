@@ -57,6 +57,13 @@ $(function() {
         var wsPath = 'ws://kappafeed.com/feed';
         var ws = new WebSocket(wsPath);
 
+        $( "#emoteSubmit" ).submit(function( event ) {
+
+            ws.send(JSON.stringify({emoteId : $('#emoteId').val()}));
+            //alert( "Handler for .submit() called." );
+            event.preventDefault();
+        });
+
         ws.onopen = function() {
             kappaCount = 0;
             msgCount = 0; //number of messages in chat

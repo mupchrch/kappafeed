@@ -4,6 +4,8 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import os
+import json
+
 from tornado.options import define, options, parse_command_line
 
 define("port", default=80, help="run on the given port", type=int)
@@ -17,9 +19,6 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("website/index.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    #def _init_(self):
-    #    self.emoteId = '25'
-
     def check_origin(self, origin):
         return True
 
@@ -30,6 +29,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         self.stream.set_nodelay(True)
 
     def on_message(self, message):
+        messageJSON = json.loads(message)
+        self.emoteId = messageJSON['emoteId']
         servLogger.log('Received a message: %s' % message)
 
     def on_close(self):
