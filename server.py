@@ -17,12 +17,16 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("website/index.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    #def _init_(self):
+    #    self.emoteId = '25'
+
     def check_origin(self, origin):
         return True
 
     def open(self):
         servLogger.log('Client connect. Total: ' + str((len(clients)+1)))
         clients.append(self)
+        self.emoteId = '25'
         self.stream.set_nodelay(True)
 
     def on_message(self, message):
@@ -33,7 +37,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         if self in clients:
             clients.remove(self)
 
-def sendToClients(message):
+def sendToClients(message, messageEmotes):
     encodedMsg = tornado.escape.json_encode(message)
 
     for client in clients:
@@ -41,7 +45,8 @@ def sendToClients(message):
             servLogger.log('Client unavailable.')
             clients.remove(client)
         else:
-            client.write_message(encodedMsg)
+            if client.emoteId in messageEmotes:
+                client.write_message(encodedMsg)
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),

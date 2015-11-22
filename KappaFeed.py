@@ -34,6 +34,7 @@ class KappaFeed(object):
 
                 while True:
                     topChannels = twitchApi.getTopChannels(self.numChannelsToJoin)
+                    globalEmotes = twitchApi.getEmotes('0')
                     channelsJoined = []
                     eventChannelsJoined = []
 
@@ -53,10 +54,10 @@ class KappaFeed(object):
                                 channelsJoined.append(chan)
 
                     if ircInstantiated:
-                        t1 = Thread(target=irc.channelScan, args=['25', 3600])
+                        t1 = Thread(target=irc.channelScan, args=[globalEmotes.values(), 3600])
                         t1.start()
                     if eventIrcInstantiated:
-                        t2 = Thread(target=eventIrc.channelScan, args=['25', 3600])
+                        t2 = Thread(target=eventIrc.channelScan, args=[globalEmotes.values(), 3600])
                         t2.start()
 
                     if ircInstantiated:

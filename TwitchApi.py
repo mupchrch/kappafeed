@@ -45,3 +45,16 @@ class TwitchApi(object):
             return True
         else:
             return False
+
+    def getEmotes(self, emoteSet):
+        self.apiLogger.log('Getting emotes for emote set %s...' % emoteSet)
+        emoteAddress = 'http://api.twitch.tv/kraken/chat/emoticon_images?emotesets=' + emoteSet
+        rawJson = urllib2.urlopen(emoteAddress)
+        twitchJson = json.load(rawJson)
+
+        emotes = {}
+        rawEmotes = twitchJson['emoticon_sets'][emoteSet]
+        for pair in rawEmotes:
+            emotes[pair['code']] = pair['id']
+
+        return emotes

@@ -131,10 +131,7 @@ class IrcConnection(object):
 
         return (parsedMsgs, messages)
 
-    #scans all channels for the emote 'emoteNum' for a period of time 'timeLen'
-    def channelScan(self, emoteNum, timeLen):
-        #self.ircLogger.log('Scanning for emote number %s...' % emoteNum)
-
+    def channelScan(self, emoteNums, timeLen):
         buffer = ''
         scanStartTime = time.time()
         while True:
@@ -144,9 +141,8 @@ class IrcConnection(object):
                 for msg in messages:
                     emoteCount = 0
                     if msg.command == 'PRIVMSG':
-                        #search for Kappa
                         for emo in msg.emotes:
-                            if emo[0] == emoteNum:
+                            if int(emo[0]) in emoteNums:
                                 actionStr = ''
                                 twitchUser = msg.prefix[:msg.prefix.find('!')]
                                 twitchChannel = msg.args[0]
@@ -159,12 +155,14 @@ class IrcConnection(object):
 
                                 #replace all emoticons
                                 offset = 0
+                                localEmotes = []
                                 for emoteInfo in msg.emotes:
                                     emote, start, end = emoteInfo
+                                    localEmotes.append(emote)
                                     startIndex = start + offset
                                     endIndex = (end + 1) + offset
                                     htmlInsert = ''
-                                    if emote == emoteNum:
+                                    if emote == '25':
                                         htmlInsert = '<img class="emoticon" src="http://kappafeed.com/static/images/kappa-md.png" alt="Kappa"></img>'
                                         emoteCount += 1
                                     else:
@@ -188,7 +186,7 @@ class IrcConnection(object):
                                             {'content'.decode('utf-8'):
                                             uTwitchMsg.decode('utf-8'),
                                             'emoteCount'.decode('utf-8'):
-                                            emoteCount}})
+                                            emoteCount}}, localEmotes)
                                 except:
                                     pass
                                 break
