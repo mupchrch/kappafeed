@@ -77,7 +77,7 @@ $(function() {
 
     //check for websocket support
     if ("WebSocket" in window) {
-        var wsPath = 'ws://localhost/feed';//'ws://kappafeed.com/feed';
+        var wsPath = 'ws://kappafeed.com/feed';
         var ws = new WebSocket(wsPath);
 
         $(document).on('click', '.emoticonHolder', function(event){
