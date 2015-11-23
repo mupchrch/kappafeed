@@ -21,11 +21,13 @@ $(function() {
         if(emotesOpen)
         {
             $('#twitchEmotes').css('opacity', 0);
+            $('#twitchEmotes').css('z-index', -1);
             emotesOpen = false;
         }
         else
         {
             $('#twitchEmotes').css('opacity', 1);
+            $('#twitchEmotes').css('z-index', 1);
             emotesOpen = true;
         }
     });
