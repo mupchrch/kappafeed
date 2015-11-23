@@ -163,3 +163,58 @@ div.kpm-web{
   vertical-align: middle;
   color: white;
 }
+
+#twitchSmile{
+   fill: rgba(0, 0, 0, 0.2);
+   cursor: pointer;
+}
+
+#twitchSmile:hover{
+   fill: rgba(0, 0, 0, 0.5);
+}
+
+.emotePopup{
+   width: 50px;
+   height: 50px;
+   position: absolute;
+   margin: -50px 0px;
+   float: right;
+   right: 0px;
+}
+
+#twitchEmotes{
+   opacity: 0;
+   transition: opacity 0.2s ease-in-out;
+   position: fixed;
+   width: 260px;
+   height: 400px;
+   background-color: white;
+   margin-top: -460px;
+   margin-left: -212px;
+   overflow-x:hidden;
+   overflow-y: scroll;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.popupEmoticon{
+   margin-left: auto;
+   margin-right: auto;
+   display: block
+
+}
+
+.emoticonHolder{
+   color: rgba(0, 0, 0, 0);
+   background-repeat: no-repeat;
+   background-position: center center;
+   vertical-align: middle;
+   width: 40px;
+   height: 30px;
+   padding: 5px;
+   display: inline-block;
+   cursor: pointer;
+}
+
+.emoticonHolder:hover{
+   background-color: rgba(0, 0, 0, 0.1);
+}

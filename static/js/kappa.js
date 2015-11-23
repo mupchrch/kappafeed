@@ -7,6 +7,29 @@ var kappaPollRate;
 
 $(function() {
     var autoScrolling = false;
+    var emotesOpen = false;
+
+    $.getJSON("https://api.twitch.tv/kraken/chat/emoticon_images?emotesets=0", function( data ){
+        var rawEmotes = data['emoticon_sets']['0'];
+        for(var e in rawEmotes){
+            var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>'
+            $('#twitchEmotes').append(dString);
+        }
+    });
+
+    $('#twitchSmile').on('click', function(){
+        if(emotesOpen)
+        {
+            $('#twitchEmotes').css('opacity', 0);
+            emotesOpen = false;
+        }
+        else
+        {
+            $('#twitchEmotes').css('opacity', 1);
+            emotesOpen = true;
+        }
+    });
+
 
     $('.scrollPopup').on('click', function(){
         $(this).css('opacity', 0);
@@ -54,15 +77,16 @@ $(function() {
 
     //check for websocket support
     if ("WebSocket" in window) {
-        var wsPath = 'ws://kappafeed.com/feed';
+        var wsPath = 'ws://localhost/feed';//'ws://kappafeed.com/feed';
         var ws = new WebSocket(wsPath);
 
-        $( "#emoteSubmit" ).submit(function( event ) {
+        $(document).on('click', '.emoticonHolder', function(event){
+            $('#twitchEmotes').css('opacity', 0);
+            emotesOpen = false;
 
-            ws.send(JSON.stringify({emoteId : $('#emoteId').val()}));
-            //alert( "Handler for .submit() called." );
-            event.preventDefault();
+            ws.send(JSON.stringify({emoteId : $(this).text()}));
         });
+
 
         ws.onopen = function() {
             kappaCount = 0;
