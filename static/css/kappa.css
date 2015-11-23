@@ -178,19 +178,18 @@ div.kpm-web{
    height: 50px;
    position: absolute;
    margin: -50px 0px;
-   float: right;
-   right: 0px;
+   right: 10px;
 }
 
 #twitchEmotes{
    opacity: 0;
    transition: opacity 0.2s ease-in-out;
    position: fixed;
-   width: 260px;
+   width: 270px;
    height: 400px;
    background-color: white;
    margin-top: -460px;
-   margin-left: -212px;
+   margin-left: -207px;
    overflow-x:hidden;
    overflow-y: scroll;
    border: 1px solid rgba(0, 0, 0, 0.2);
