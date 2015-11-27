@@ -185,8 +185,8 @@ class IrcConnection(object):
                                          'msg'.decode('utf-8'):
                                             {'content'.decode('utf-8'):
                                             uTwitchMsg.decode('utf-8'),
-                                            'emoteCount'.decode('utf-8'):
-                                            emoteCount}}, localEmotes)
+                                            'emoteList'.decode('utf-8'):
+                                            localEmotes}}, localEmotes)
                                 except:
                                     pass
                                 break

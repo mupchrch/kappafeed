@@ -4,6 +4,8 @@ var msgCount;
 var maxNumMsg;
 var channelNameLen;
 var kappaPollRate;
+var selectedEmote;
+var selectedEmoteId = '25';
 
 $(function() {
     var autoScrolling = false;
@@ -12,10 +14,18 @@ $(function() {
     $.getJSON("https://api.twitch.tv/kraken/chat/emoticon_images?emotesets=0", function( data ){
         var rawEmotes = data['emoticon_sets']['0'];
         for(var e in rawEmotes){
-            var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>'
+            if(rawEmotes[e]['id'] == '25')
+            {
+                var dString = '<div class="emoticonHolder selected" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>';
+                $('div.kpm').empty().append('0<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" ></div>/min');
+            }
+            else
+                var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>';
             $('#twitchEmotes').append(dString);
         }
     });
+
+    selectedEmote = $('.selected');
 
     $('#twitchSmile').on('click', function(){
         if(emotesOpen)
@@ -86,7 +96,16 @@ $(function() {
             $('#twitchEmotes').css('opacity', 0);
             emotesOpen = false;
 
-            ws.send(JSON.stringify({emoteId : $(this).text()}));
+            var nSelectedEmote = $(this);
+            if(selectedEmote != nSelectedEmote){
+                $('.selected').removeClass("selected");
+                nSelectedEmote.addClass("selected");
+
+                kappaCount = 0;
+                selectedEmote = nSelectedEmote;
+                selectedEmoteId = $(this).text()
+                ws.send(JSON.stringify({emoteId : selectedEmoteId}));
+            }
         });
 
 
@@ -135,15 +154,10 @@ $(function() {
  */
 function parseKappaMsg(jsonMsg){
     var channel = jsonMsg.channel.substring(1);
-    var shortChannel = channel;
-
-    if(shortChannel.length > channelNameLen){
-        shortChannel = shortChannel.substring(0, channelNameLen) + '...';
-    }
 
     //build the html for channel link
     var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
-         channel + '" target="_blank">' + shortChannel + '</a></span></div>';
+         channel + '" target="_blank">' + channel + '</a></span></div>';
     //build the user link
     kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:'+
         jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
@@ -160,7 +174,13 @@ function parseKappaMsg(jsonMsg){
         kappaMsg += ': </span><span class="message">';
     }
     kappaMsg += jsonMsg.msg.content;
-    kappaCount += jsonMsg.msg.emoteCount;
+    
+    var emoteArray = jsonMsg.msg.emoteList;
+    for(var i = 0; i < emoteArray.length; i++ ){
+        if(emoteArray[i] == selectedEmoteId)
+            kappaCount++;
+    }
+    //kappaCount += jsonMsg.msg.emoteCount;
     
     return '<div class="msgDiv">' + kappaMsg + '</div>';
 }
@@ -182,7 +202,7 @@ function kappaPerMin(){
     avgKpm /= kpmArray.length;
     avgKpm = Math.round(avgKpm);
 
-    var curKpm = parseInt($('div.kpm').text().replace('kpm', ''));
+    var curKpm = parseInt($('div.kpm').text().replace('<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0\')" ></div>/min', ''));
     gradualIncrease(curKpm, avgKpm, (kappaPollRate-0.2)*1000, 100);
     kappaCount = 0;
 }
@@ -203,7 +223,7 @@ function gradualIncrease(startNum, endNum, time, updateRate){
     function updateValue(){
         value += increaseAmt;
         numIncreases++;
-        $('div.kpm').text(value.toFixed(0) + 'kpm');
+        $('div.kpm').empty().append(value.toFixed(0) + '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0\')" ></div>/min');
 
         if(numIncreases >= numUpdates){
             window.clearInterval(intervalId);

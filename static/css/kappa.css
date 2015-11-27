@@ -51,7 +51,7 @@ div.info{
 }
 
 .chat .messages:hover{
-   overflow-y: scroll;
+   /*overflow-y: scroll;*/ 
 }
 
 .chat .messages > div{
@@ -71,6 +71,12 @@ div.info{
 a.channelLink{
    display: inline-block;
    color: blue;
+
+   /* Truncating the string based on width. */
+   width: 55px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 
 a.channelLink:visited{
@@ -216,5 +222,9 @@ div.kpm-web{
 }
 
 .emoticonHolder:hover{
+   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.selected{
    background-color: rgba(0, 0, 0, 0.1);
 }
