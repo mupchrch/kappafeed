@@ -46,7 +46,7 @@ def sendToClients(message, messageEmotes):
             servLogger.log('Client unavailable.')
             clients.remove(client)
         else:
-            if client.emoteId in messageEmotes:
+            if client.emoteId in messageEmotes or messageEmotes == []:
                 client.write_message(encodedMsg)
 
 settings = {

@@ -75,9 +75,9 @@ class KappaFeed(object):
                                 break
 
                     self.kfLogger.log('Refreshing top streams...')
-                    server.sendToClients(self.refreshMsg)
+                    server.sendToClients(self.refreshMsg, [])
                 self.kfLogger.log('Restarting...')
-                server.sendToClients(self.refreshMsg)
+                server.sendToClients(self.refreshMsg, [])
             except Exception, e:
                 self.kfLogger.log('Error, restarting... %s' % str(e))
-                server.sendToClients(self.refreshMsg)
+                server.sendToClients(self.refreshMsg, [])
