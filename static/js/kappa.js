@@ -17,7 +17,7 @@ $(function() {
             if(rawEmotes[e]['id'] == '25')
             {
                 var dString = '<div class="emoticonHolder selected" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>';
-                $('div.kpm').empty().append('0<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" ></div>/min');
+                $('div.kpm').empty().append('0 <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min');
             }
             else
                 var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>';
@@ -126,14 +126,14 @@ $(function() {
             msgCount++;
             var jsonMsg = JSON.parse(evt.data);
             var parsedMsg = '';
-            
+
             if(jsonMsg.channel){
             	parsedMsg = parseKappaMsg(jsonMsg);
             }
             else if(jsonMsg.serverMsg){
             	parsedMsg = '<div class="msgDiv"><div class="serverMsgDiv">' + jsonMsg.serverMsg + '</div></div>'
             }
-            
+
             printer.append(parsedMsg);
             scrollBottom();
         };
@@ -164,7 +164,7 @@ function parseKappaMsg(jsonMsg){
         jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name +
         '</a>';
 
-    //if this is an action message, color it green
+    //if this is an action message, color it the color of user name
     if(jsonMsg.msg.content.substring(0,6) == 'ACTION'){
         kappaMsg += ' </span><span class="action" style="color:' +
             jsonMsg.user.color + '">';
@@ -174,14 +174,14 @@ function parseKappaMsg(jsonMsg){
         kappaMsg += ': </span><span class="message">';
     }
     kappaMsg += jsonMsg.msg.content;
-    
+
     var emoteArray = jsonMsg.msg.emoteList;
     for(var i = 0; i < emoteArray.length; i++ ){
         if(emoteArray[i] == selectedEmoteId)
             kappaCount++;
     }
     //kappaCount += jsonMsg.msg.emoteCount;
-    
+
     return '<div class="msgDiv">' + kappaMsg + '</div>';
 }
 
@@ -202,7 +202,7 @@ function kappaPerMin(){
     avgKpm /= kpmArray.length;
     avgKpm = Math.round(avgKpm);
 
-    var curKpm = parseInt($('div.kpm').text().replace('<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0\')" ></div>/min', ''));
+    var curKpm = parseInt($('div.kpm').text().replace(' <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min', ''));
     gradualIncrease(curKpm, avgKpm, (kappaPollRate-0.2)*1000, 100);
     kappaCount = 0;
 }
@@ -217,13 +217,13 @@ function gradualIncrease(startNum, endNum, time, updateRate){
     var increaseAmt = (endNum - startNum) / numUpdates;
 
     var value = startNum;
-    var numIncreases = 0;        
+    var numIncreases = 0;
     var intervalId = window.setInterval(updateValue, updateRate);
 
     function updateValue(){
         value += increaseAmt;
         numIncreases++;
-        $('div.kpm').empty().append(value.toFixed(0) + '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0\')" ></div>/min');
+        $('div.kpm').empty().append(value.toFixed(0) + ' <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min');
 
         if(numIncreases >= numUpdates){
             window.clearInterval(intervalId);

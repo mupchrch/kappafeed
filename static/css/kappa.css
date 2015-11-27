@@ -51,7 +51,7 @@ div.info{
 }
 
 .chat .messages:hover{
-   /*overflow-y: scroll;*/ 
+   /*overflow-y: scroll;*/
 }
 
 .chat .messages > div{
@@ -144,6 +144,7 @@ div.kpm-web{
    color: white;
    font-size: 2em;
    padding-top: 25px;
+   padding-right: 6px;
    font-weight: bold;
    display: inline-block;
 }
@@ -226,5 +227,5 @@ div.kpm-web{
 }
 
 .selected{
-   background-color: rgba(0, 0, 0, 0.1);
+   background-color: #B9A3E3;
 }
