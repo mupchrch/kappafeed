@@ -16,11 +16,11 @@ $(function() {
         for(var e in rawEmotes){
             if(rawEmotes[e]['id'] == '25')
             {
-                var dString = '<div class="emoticonHolder selected" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>';
+                var dString = '<div class="emoticonHolder selected" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" data-hover="'+rawEmotes[e]['code']+'">'+rawEmotes[e]['id']+'</div>';
                 $('div.kpm').empty().append('0 <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min');
             }
             else
-                var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" >'+rawEmotes[e]['id']+'</div>';
+                var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" data-hover="'+emoteCodeCleaner(rawEmotes[e]['code'])+'">'+rawEmotes[e]['id']+'</div>';
             $('#twitchEmotes').append(dString);
         }
     });
@@ -104,6 +104,10 @@ $(function() {
                 kappaCount = 0;
                 selectedEmote = nSelectedEmote;
                 selectedEmoteId = $(this).text()
+
+                printer.empty();
+                printer.append('<div class="msgDiv"><div class="serverMsgDiv"> Searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" />.</div></div>');
+
                 ws.send(JSON.stringify({emoteId : selectedEmoteId}));
             }
         });
@@ -119,6 +123,7 @@ $(function() {
 
             window.setInterval(kappaPerMin, kappaPollRate * 1000);
             printer.append('<div class="msgDiv"><div class="serverMsgDiv">Welcome to kappafeed.</div></div>');
+            printer.append('<div class="msgDiv"><div class="serverMsgDiv"> Searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" />.</div></div>');
             scrollBottom();
         };
 
@@ -230,3 +235,41 @@ function gradualIncrease(startNum, endNum, time, updateRate){
         }
     }
 }
+
+function emoteCodeCleaner(code){
+    switch(code){
+        case 'B-?\\)':
+        return 'B)';
+        case '\\:-?[z|Z|\\|]':
+        return ':|';
+        case '\\:-?\\)':
+        return ':)';
+        case '\\:-?\\(':
+        return ':(';
+        case '\\:-?(p|P)':
+        return ':P';
+        case '\\;-?(p|P)':
+        return ';P';
+        case '\\&lt\\;3':
+        return '<3';
+        case '\\;-?\\':
+        return ':\\';
+        case 'R-?\\)':
+        return 'R)';
+        case '\\:-?D':
+        return ':D';
+        case '[oO](_|\\.)[oO]':
+        return 'O_o';
+        case '\\&gt\\;\\(':
+        return '>(';
+        case '\\:-?(o|O)':
+        return ':O';
+        case '\\:-?[\\\\/]':
+        return ':/';
+        case '\\;-?\\)':
+        return ';)';
+        default:
+        return code;
+    }
+}
+

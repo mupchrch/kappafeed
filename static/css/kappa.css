@@ -226,6 +226,10 @@ div.kpm-web{
    background-color: rgba(0, 0, 0, 0.1);
 }
 
+.emoticonHolder span{
+   color: black;
+}
+
 .selected{
    background-color: #B9A3E3;
 }
