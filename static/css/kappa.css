@@ -11,12 +11,15 @@ div.banner{
 }
 
 div.title{
-   height: 80px;
-   width: 280px;
+   /*height: 80px;
+   width: 280px;*/
+   height: 50px;
+   width: 250px;
    display: inline-block;
-   background-image: url(http://kappafeed.com/static/images/kappafeed-logo-straight.png);
-   background-size: 280px 80px;
+   background-image: url(http://localhost/static/images/kappafeed_logo_white.png);/*url(http://kappafeed.com/static/images/kappafeed-logo-straight.png);*/
+   background-size: 250px 50px;/*280px 80px;*/
    background-repeat: no-repeat;
+   margin-top: 14px;
 }
 
 div.info{

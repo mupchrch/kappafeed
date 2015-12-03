@@ -106,7 +106,7 @@ $(function() {
                 selectedEmoteId = $(this).text()
 
                 printer.empty();
-                printer.append('<div class="msgDiv"><div class="serverMsgDiv"> Searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" />.</div></div>');
+                printer.append('<div class="msgDiv"><div class="serverMsgDiv">searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" /></div></div>');
 
                 ws.send(JSON.stringify({emoteId : selectedEmoteId}));
             }
@@ -122,8 +122,8 @@ $(function() {
             kappaPollRate = 1.7; //seconds between each poll
 
             window.setInterval(kappaPerMin, kappaPollRate * 1000);
-            printer.append('<div class="msgDiv"><div class="serverMsgDiv">Welcome to kappafeed.</div></div>');
-            printer.append('<div class="msgDiv"><div class="serverMsgDiv"> Searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" />.</div></div>');
+            printer.append('<div class="msgDiv"><div class="serverMsgDiv" style="font-weight: bold;">welcome to kappafeed</div></div>');
+            printer.append('<div class="msgDiv"><div class="serverMsgDiv">searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" /></div></div>');
             scrollBottom();
         };
 
@@ -272,4 +272,3 @@ function emoteCodeCleaner(code){
         return code;
     }
 }
-
