@@ -10,6 +10,7 @@ var selectedEmoteId = '25';
 $(function() {
     var autoScrolling = false;
     var emotesOpen = false;
+    var infoOpen = false;
 
     $.getJSON("https://api.twitch.tv/kraken/chat/emoticon_images?emotesets=0", function(data) {
         var rawEmotes = data['emoticon_sets']['0'];
@@ -25,7 +26,8 @@ $(function() {
 
     selectedEmote = $('.selected');
 
-    $('.twitchSmile').on('click', function() {
+    $('.twitchSmile').on('click', function(e) {
+        e.stopPropagation();
         $('.twitchEmotes').toggleClass('popupShow');
         $('.emotePopup > .popupArrow').toggleClass('emotePopupArrowShow');
         //jquery cannot toggle class of SVG
@@ -38,8 +40,33 @@ $(function() {
         }
     });
 
-    $('.infoIcon').on('click', function() {
+    $('.infoIcon').on('click', function(e) {
+        e.stopPropagation();
+        $('.info').toggleClass('popupShow');
+        $('.infoPopup > .popupArrow').toggleClass('infoPopupArrowShow');
+        //jquery cannot toggle class of SVG
+        if (infoOpen) {
+            $('.infoIcon').attr('class', 'infoIcon');
+            infoOpen = false;
+        } else {
+            $('.infoIcon').attr('class', 'infoIcon infoIconHover');
+            infoOpen = true;
+        }
+    });
 
+    $(window).on('click', function() {
+        if (emotesOpen) {
+            $('.twitchEmotes').toggleClass('popupShow');
+            $('.emotePopup > .popupArrow').toggleClass('emotePopupArrowShow');
+            $('.twitchSmile').attr('class', 'twitchSmile');
+            emotesOpen = false;
+        }
+        if (infoOpen) {
+            $('.info').toggleClass('popupShow');
+            $('.infoPopup > .popupArrow').toggleClass('infoPopupArrowShow');
+            $('.infoIcon').attr('class', 'infoIcon');
+            infoOpen = false;
+        }
     });
 
     $('.scrollPopup').on('click', function() {

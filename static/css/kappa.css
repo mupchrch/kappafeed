@@ -2,13 +2,14 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
+    background-color: white;
 }
-div.banner {
+.banner {
     background: #6441a5;
     height: 70px;
     width: 100%;
 }
-div.title {
+.title {
     height: 50px;
     width: 250px;
     display: inline-block;
@@ -18,11 +19,28 @@ div.title {
     margin-top: 12px;
     margin-left: 12px;
 }
-div.info {
-    float: left;
-    color: #999;
-    padding-left: 3px;
+
+.info {
+    /*color: #999;*/
+    opacity: 0;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
+    position: fixed;
+    width: 270px;
+    height: auto;
+    background-color: #eee;
+    overflow: auto;
+    border: 1px solid #aaa;
+    bottom: 45px;
+    left: 8px;
+    z-index: -1;
 }
+
+.info > p {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 16px;
+}
+
 .chat {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin: 0 auto;
@@ -146,13 +164,15 @@ div.kpm-web {
 }
 .infoIcon {
     display: inline-block;
-    width: 1.5em;
-    height: 1.5em;
+    width: 25px;
+    height: 25px;
     fill: rgba(0, 0, 0, 0.2);
     cursor: pointer;
     position: absolute;
     bottom: 8px;
-    left: 8px;
+    left: 16px;
+    transition: fill 0.2s ease-in-out;
+    -webkit-transition: fill 0.2s ease-in-out;
 }
 .infoIcon:hover, .infoIconHover {
     fill: rgba(0, 0, 0, 0.5);
@@ -160,6 +180,8 @@ div.kpm-web {
 .twitchSmile {
     fill: rgba(0, 0, 0, 0.2);
     cursor: pointer;
+    transition: fill 0.2s ease-in-out;
+    -webkit-transition: fill 0.2s ease-in-out;
 }
 .twitchSmile:hover, .twitchSmileHover {
     fill: rgba(0, 0, 0, 0.5);
@@ -230,6 +252,13 @@ div.kpm-web {
 .emotePopupArrowShow {
     margin-top: -68px;
     margin-left: 2px;
+    opacity: 1;
+    z-index: 2;
+}
+
+.infoPopupArrowShow {
+    bottom: 36px;
+    left: 8px;
     opacity: 1;
     z-index: 2;
 }
