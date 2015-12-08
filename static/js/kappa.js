@@ -11,53 +11,50 @@ $(function() {
     var autoScrolling = false;
     var emotesOpen = false;
 
-    $.getJSON("https://api.twitch.tv/kraken/chat/emoticon_images?emotesets=0", function( data ){
+    $.getJSON("https://api.twitch.tv/kraken/chat/emoticon_images?emotesets=0", function(data) {
         var rawEmotes = data['emoticon_sets']['0'];
-        for(var e in rawEmotes){
-            if(rawEmotes[e]['id'] == '25')
-            {
-                var dString = '<div class="emoticonHolder selected" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" data-hover="'+rawEmotes[e]['code']+'">'+rawEmotes[e]['id']+'</div>';
+        for (var e in rawEmotes) {
+            if (rawEmotes[e]['id'] == '25') {
+                var dString = '<div class="emoticonHolder selected" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" data-hover="' + rawEmotes[e]['code'] + '">' + rawEmotes[e]['id'] + '</div>';
                 $('div.kpm').empty().append('0 <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min');
-            }
-            else
-                var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" data-hover="'+emoteCodeCleaner(rawEmotes[e]['code'])+'">'+rawEmotes[e]['id']+'</div>';
-            $('#twitchEmotes').append(dString);
+            } else
+                var dString = '<div class="emoticonHolder" style="background-image: url(\'http://static-cdn.jtvnw.net/emoticons/v1/' + rawEmotes[e]['id'] + '/1.0\')" data-hover="' + emoteCodeCleaner(rawEmotes[e]['code']) + '">' + rawEmotes[e]['id'] + '</div>';
+            $('.twitchEmotes').append(dString);
         }
     });
 
     selectedEmote = $('.selected');
 
-    $('#twitchSmile').on('click', function(){
-        if(emotesOpen)
-        {
-            $('#twitchEmotes').css('opacity', 0);
-            $('#twitchEmotes').css('z-index', -1);
+    $('.twitchSmile').on('click', function() {
+        $('.twitchEmotes').toggleClass('twitchEmotesShow');
+        //jquery cannot toggle class of SVG
+        if (emotesOpen) {
+            $('.twitchSmile').attr('class', 'twitchSmile');
             emotesOpen = false;
-        }
-        else
-        {
-            $('#twitchEmotes').css('opacity', 1);
-            $('#twitchEmotes').css('z-index', 1);
+        } else {
+            $('.twitchSmile').attr('class', 'twitchSmile twitchSmileHover');
             emotesOpen = true;
         }
     });
 
+    $('.infoIcon').on('click', function() {
 
-    $('.scrollPopup').on('click', function(){
+    });
+
+    $('.scrollPopup').on('click', function() {
         $(this).css('opacity', 0);
         $(this).css('z-index', -1);
         preventNewScroll = false;
         scrollBottom();
     });
 
-    $('.messages').on('scroll', function(){
-        if(!autoScrolling){
-            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+    $('.messages').on('scroll', function() {
+        if (!autoScrolling) {
+            if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
                 $('.scrollPopup').css('opacity', 0);
                 $('.scrollPopup').css('z-index', -1);
                 preventNewScroll = false;
-            }
-            else{
+            } else {
                 $('.scrollPopup').css('z-index', 1);
                 $('.scrollPopup').css('opacity', 1);
                 preventNewScroll = true;
@@ -72,15 +69,17 @@ $(function() {
     /*
      * Scrolls the chat to the bottom automatically.
      */
-    function scrollBottom(){
-        if(!preventNewScroll){
+    function scrollBottom() {
+        if (!preventNewScroll) {
             autoScrolling = true;
-            printer.stop().animate( {scrollTop: printer[0].scrollHeight - printer.innerHeight()  }, 200, 'swing', function(){
-                if(msgCount > maxNumMsg){
-                    for(var i=maxNumMsg; i<msgCount; i++){
+            printer.stop().animate({
+                scrollTop: printer[0].scrollHeight - printer.innerHeight()
+            }, 200, 'swing', function() {
+                if (msgCount > maxNumMsg) {
+                    for (var i = maxNumMsg; i < msgCount; i++) {
                         $(printer).find('div').first().remove();
                     }
-                    msgCount -= (i-maxNumMsg);
+                    msgCount -= (i - maxNumMsg);
                 }
                 autoScrolling = false;
             });
@@ -92,12 +91,12 @@ $(function() {
         var wsPath = 'ws://kappafeed.com/feed';
         var ws = new WebSocket(wsPath);
 
-        $(document).on('click', '.emoticonHolder', function(event){
-            $('#twitchEmotes').css('opacity', 0);
+        $(document).on('click', '.emoticonHolder', function(event) {
+            $('.twitchEmotes').css('opacity', 0);
             emotesOpen = false;
 
             var nSelectedEmote = $(this);
-            if(selectedEmote != nSelectedEmote){
+            if (selectedEmote != nSelectedEmote) {
                 $('.selected').removeClass("selected");
                 nSelectedEmote.addClass("selected");
 
@@ -108,7 +107,9 @@ $(function() {
                 printer.empty();
                 printer.append('<div class="msgDiv"><div class="serverMsgDiv">searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" /></div></div>');
 
-                ws.send(JSON.stringify({emoteId : selectedEmoteId}));
+                ws.send(JSON.stringify({
+                    emoteId: selectedEmoteId
+                }));
             }
         });
 
@@ -127,16 +128,15 @@ $(function() {
             scrollBottom();
         };
 
-        ws.onmessage = function (evt) {
+        ws.onmessage = function(evt) {
             msgCount++;
             var jsonMsg = JSON.parse(evt.data);
             var parsedMsg = '';
 
-            if(jsonMsg.channel){
-            	parsedMsg = parseKappaMsg(jsonMsg);
-            }
-            else if(jsonMsg.serverMsg){
-            	parsedMsg = '<div class="msgDiv"><div class="serverMsgDiv">' + jsonMsg.serverMsg + '</div></div>'
+            if (jsonMsg.channel) {
+                parsedMsg = parseKappaMsg(jsonMsg);
+            } else if (jsonMsg.serverMsg) {
+                parsedMsg = '<div class="msgDiv"><div class="serverMsgDiv">' + jsonMsg.serverMsg + '</div></div>'
             }
 
             printer.append(parsedMsg);
@@ -148,8 +148,7 @@ $(function() {
             scrollBottom();
         };
 
-    }
-    else{
+    } else {
         alert('websocket not supported');
     }
 });
@@ -157,32 +156,31 @@ $(function() {
 /*
  * Parses a kappa-filled json message from server.
  */
-function parseKappaMsg(jsonMsg){
+function parseKappaMsg(jsonMsg) {
     var channel = jsonMsg.channel.substring(1);
 
     //build the html for channel link
     var kappaMsg = '<div class="channelDiv"><span class="channel"><a class="channelLink" href="http://www.twitch.tv/' +
-         channel + '" target="_blank">' + channel + '</a></span></div>';
+        channel + '" target="_blank">' + channel + '</a></span></div>';
     //build the user link
-    kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:'+
+    kappaMsg += '<div class="userMsgDiv"><span class="user"><a class="userLink" style="color:' +
         jsonMsg.user.color + ';" href="http://www.twitch.tv/' +
         jsonMsg.user.name + '/profile" target="_blank">' + jsonMsg.user.name +
         '</a>';
 
     //if this is an action message, color it the color of user name
-    if(jsonMsg.msg.content.substring(0,6) == 'ACTION'){
+    if (jsonMsg.msg.content.substring(0, 6) == 'ACTION') {
         kappaMsg += ' </span><span class="action" style="color:' +
             jsonMsg.user.color + '">';
         jsonMsg.msg.content = jsonMsg.msg.content.substring(7);
-    }
-    else{
+    } else {
         kappaMsg += ': </span><span class="message">';
     }
     kappaMsg += jsonMsg.msg.content;
 
     var emoteArray = jsonMsg.msg.emoteList;
-    for(var i = 0; i < emoteArray.length; i++ ){
-        if(emoteArray[i] == selectedEmoteId)
+    for (var i = 0; i < emoteArray.length; i++) {
+        if (emoteArray[i] == selectedEmoteId)
             kappaCount++;
     }
     //kappaCount += jsonMsg.msg.emoteCount;
@@ -193,29 +191,29 @@ function parseKappaMsg(jsonMsg){
 /*
  * Calculates the KPM in chat.
  */
-function kappaPerMin(){
-    var kpm = kappaCount * (60/kappaPollRate);
+function kappaPerMin() {
+    var kpm = kappaCount * (60 / kappaPollRate);
     kpmArray.push(kpm);
-    if(kpmArray.length > 5){
+    if (kpmArray.length > 5) {
         kpmArray.shift();
     }
 
     var avgKpm = 0;
-    for(var i=0; i<kpmArray.length; i++){
+    for (var i = 0; i < kpmArray.length; i++) {
         avgKpm += kpmArray[i];
     }
     avgKpm /= kpmArray.length;
     avgKpm = Math.round(avgKpm);
 
     var curKpm = parseInt($('div.kpm').text().replace(' <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min', ''));
-    gradualIncrease(curKpm, avgKpm, (kappaPollRate-0.2)*1000, 100);
+    gradualIncrease(curKpm, avgKpm, (kappaPollRate - 0.2) * 1000, 100);
     kappaCount = 0;
 }
 
 /*
  * Animates the kpm meter in between updates.
  */
-function gradualIncrease(startNum, endNum, time, updateRate){
+function gradualIncrease(startNum, endNum, time, updateRate) {
     //number of times to update value in time frame:
     var numUpdates = Math.ceil(time / updateRate);
     //amount to increase value by each update:
@@ -225,50 +223,50 @@ function gradualIncrease(startNum, endNum, time, updateRate){
     var numIncreases = 0;
     var intervalId = window.setInterval(updateValue, updateRate);
 
-    function updateValue(){
+    function updateValue() {
         value += increaseAmt;
         numIncreases++;
         $('div.kpm').empty().append(value.toFixed(0) + ' <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" ></img> /min');
 
-        if(numIncreases >= numUpdates){
+        if (numIncreases >= numUpdates) {
             window.clearInterval(intervalId);
         }
     }
 }
 
-function emoteCodeCleaner(code){
-    switch(code){
+function emoteCodeCleaner(code) {
+    switch (code) {
         case 'B-?\\)':
-        return 'B)';
+            return 'B)';
         case '\\:-?[z|Z|\\|]':
-        return ':|';
+            return ':|';
         case '\\:-?\\)':
-        return ':)';
+            return ':)';
         case '\\:-?\\(':
-        return ':(';
+            return ':(';
         case '\\:-?(p|P)':
-        return ':P';
+            return ':P';
         case '\\;-?(p|P)':
-        return ';P';
+            return ';P';
         case '\\&lt\\;3':
-        return '<3';
+            return '<3';
         case '\\;-?\\':
-        return ':\\';
+            return ':\\';
         case 'R-?\\)':
-        return 'R)';
+            return 'R)';
         case '\\:-?D':
-        return ':D';
+            return ':D';
         case '[oO](_|\\.)[oO]':
-        return 'O_o';
+            return 'O_o';
         case '\\&gt\\;\\(':
-        return '>(';
+            return '>(';
         case '\\:-?(o|O)':
-        return ':O';
+            return ':O';
         case '\\:-?[\\\\/]':
-        return ':/';
+            return ':/';
         case '\\;-?\\)':
-        return ';)';
+            return ';)';
         default:
-        return code;
+            return code;
     }
 }

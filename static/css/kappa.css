@@ -1,236 +1,216 @@
 html, body {
-   margin: 0;
-   padding: 0;
-   height: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
-
-div.banner{
-   background: #6441a5;
-   height: 70px;
-   width: 100%;
+div.banner {
+    background: #6441a5;
+    height: 70px;
+    width: 100%;
 }
-
-div.title{
-   height: 50px;
-   width: 250px;
-   display: inline-block;
-   background-image: url(http://kappafeed.com/static/images/kappafeed_logo_white.png);
-   background-size: 250px 50px;
-   background-repeat: no-repeat;
-   margin-top: 14px;
+div.title {
+    height: 50px;
+    width: 250px;
+    display: inline-block;
+    background-image: url(http://kappafeed.com/static/images/kappafeed_logo_white.png);
+    background-size: 250px 50px;
+    background-repeat: no-repeat;
+    margin-top: 12px;
+    margin-left: 12px;
 }
-
-div.info{
-   float: left;
-   color: #999;
-   padding-left: 3px;
+div.info {
+    float: left;
+    color: #999;
+    padding-left: 3px;
 }
-
-.chat{
-   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-   margin: 0 auto;
-   position: fixed;
-   left: 0px;
-   right: 0px;
-   bottom: 15px;
-   overflow: hidden;
-   border: 1px solid #aaa;
+.chat {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0 auto;
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    bottom: 15px;
+    overflow: hidden;
+    border: 1px solid #aaa;
 }
-
-.chat-web{
-   width: 600px;
-   top: 85px;
-   max-height: 750px;
+.chat-web {
+    width: 600px;
+    top: 85px;
+    max-height: 750px;
 }
-
-.chat .messages{
-   background: #eee;
-   overflow: hidden;
-   width: 100%;
-   height: 100%;
-   overflow-y: scroll;
+.chat .messages {
+    background: #eee;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
 }
-
-.chat .messages:hover{
-   /*overflow-y: scroll;*/
+.chat .messages > div {
+    border-bottom: 1px solid #999;
+    display: table;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
-
-.chat .messages > div{
-   border-bottom: 1px solid #999;
-   display: table;
-   width: 100%;
-   padding-top: 10px;
-   padding-bottom: 10px;
+.emoticon {
+    display: inline-block;
+    background-repeat: no-repeat;
+    vertical-align: middle;
 }
-
-.emoticon{
-   display: inline-block;
-   background-repeat: no-repeat;
-   vertical-align: middle;
+a.channelLink {
+    display: inline-block;
+    color: blue;
+    /* Truncating the string based on width. */
+    width: 55px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-a.channelLink{
-   display: inline-block;
-   color: blue;
-
-   /* Truncating the string based on width. */
-   width: 55px;
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
+a.channelLink:visited {
+    color: blue;
 }
-
-a.channelLink:visited{
-   color: blue;
+a.userLink {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: bold;
 }
-
-a.userLink{
-   display: inline-block;
-   text-decoration: none;
-   font-weight: bold;
+a.userLink:hover {
+    text-decoration: underline;
 }
-
-a.userLink:hover{
-   text-decoration: underline;
+a.userLink:visited {
+    text-decoration: none;
 }
-
-a.userLink:visited{
-   text-decoration: none;
+div.channelDiv {
+    width: 80px;
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 15px;
 }
-
-div.channelDiv{
-   width: 80px;
-   display: table-cell;
-   vertical-align: middle;
-   padding-left: 15px;
+div.userMsgDiv {
+    display: table-cell;
+    padding-right: 15px;
 }
-
-div.userMsgDiv{
-   display: table-cell;
-   padding-right: 15px;
+div.serverMsgDiv {
+    display: table-cell;
+    padding-left: 15px;
+    padding-right: 15px;
 }
-
-div.serverMsgDiv{
-   display: table-cell;
-   padding-left: 15px;
-   padding-right: 15px;
+span.channel {
+    font-size: 10px;
 }
-
-span.channel{
-   font-size: 10px;
+span.user {
+    background: #eee;
 }
-
-span.user{
-   background: #eee;
+span.message {
+    background: #eee;
+    display: inline;
+    color: black;
+    font-size: 1em;
+    line-height: 30px;
 }
-
-span.message{
-   background: #eee;
-   display: inline;
-   color: black;
-   font-size: 1em;
-   line-height: 30px;
+span.action {
+    background: #eee;
+    display: inline;
+    font-size: 1em;
+    line-height: 30px;
 }
-
-span.action{
-   background: #eee;
-   display: inline;
-   font-size: 1em;
-   line-height: 30px;
+div.kpm-web {
+    font-family: Helvetica, Arial, sans-serif;
+    float: right;
+    color: white;
+    font-size: 2em;
+    padding-top: 25px;
+    padding-right: 6px;
+    font-weight: bold;
+    display: inline-block;
 }
-
-div.kpm-web{
-   font-family: Helvetica, Arial, sans-serif;
-   float: right;
-   color: white;
-   font-size: 2em;
-   padding-top: 25px;
-   padding-right: 6px;
-   font-weight: bold;
-   display: inline-block;
+.scrollPopup {
+    height: 60px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+    text-align: center;
+    display: table;
+    -webkit-backface-visibility: hidden;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
+    opacity: 0;
+    z-index: -1;
 }
-
-.scrollPopup{
-   height: 60px;
-   width: 100%;
-   position: absolute;
-   bottom: 0;
-   background-color: rgba(0, 0, 0, 0.7);
-   cursor: pointer;
-   text-align: center;
-   display: table;
-   -webkit-backface-visibility: hidden;
-   -webkit-transition: opacity 0.2s ease-in-out;
-   transition: opacity 0.2s ease-in-out;
-   opacity: 0;
-   z-index: -1;
+.scrollPopupText {
+    display: table-cell;
+    vertical-align: middle;
+    color: white;
 }
-
-.scrollPopupText{
-  display: table-cell;
-  vertical-align: middle;
-  color: white;
+.infoIcon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    fill: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
 }
-
-#twitchSmile{
-   fill: rgba(0, 0, 0, 0.2);
-   cursor: pointer;
+.infoIcon:hover, .infoIconHover {
+    fill: rgba(0, 0, 0, 0.5);
 }
-
-#twitchSmile:hover{
-   fill: rgba(0, 0, 0, 0.5);
+.twitchSmile {
+    fill: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
-
-.emotePopup{
-   width: 50px;
-   height: 50px;
-   position: absolute;
-   margin: -50px 0px;
-   right: 15px;
+.twitchSmile:hover, .twitchSmileHover {
+    fill: rgba(0, 0, 0, 0.5);
 }
-
-#twitchEmotes{
-   opacity: 0;
-   transition: opacity 0.2s ease-in-out;
-   position: fixed;
-   width: 270px;
-   height: 400px;
-   background-color: white;
-   margin-top: -460px;
-   margin-left: -207px;
-   overflow-x:hidden;
-   overflow-y: scroll;
-   border: 1px solid rgba(0, 0, 0, 0.2);
-   z-index: -1;
+.emotePopup {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    margin: -50px 0px;
+    right: 15px;
 }
-
-.popupEmoticon{
-   margin-left: auto;
-   margin-right: auto;
-   display: block
-
+.twitchEmotes {
+    opacity: 0;
+    transition: opacity 0.2s;
+    position: fixed;
+    width: 270px;
+    height: 400px;
+    background-color: white;
+    margin-top: -460px;
+    margin-left: -207px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    z-index: -1;
 }
-
-.emoticonHolder{
-   color: rgba(0, 0, 0, 0);
-   background-repeat: no-repeat;
-   background-position: center center;
-   vertical-align: middle;
-   width: 40px;
-   height: 30px;
-   padding: 5px;
-   display: inline-block;
-   cursor: pointer;
+.twitchEmotesShow {
+    opacity: 1;
+    z-index: 1;
 }
-
-.emoticonHolder:hover{
-   background-color: rgba(0, 0, 0, 0.1);
+.popupEmoticon {
+    margin-left: auto;
+    margin-right: auto;
+    display: block
 }
-
-.emoticonHolder span{
-   color: black;
+.emoticonHolder {
+    color: rgba(0, 0, 0, 0);
+    background-repeat: no-repeat;
+    background-position: center center;
+    vertical-align: middle;
+    width: 40px;
+    height: 30px;
+    padding: 5px;
+    display: inline-block;
+    cursor: pointer;
 }
-
-.selected{
-   background-color: #B9A3E3;
+.emoticonHolder:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.emoticonHolder span {
+    color: black;
+}
+.selected {
+    background-color: #B9A3E3;
 }
