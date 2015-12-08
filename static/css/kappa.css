@@ -173,19 +173,20 @@ div.kpm-web {
 }
 .twitchEmotes {
     opacity: 0;
-    transition: opacity 0.2s;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
     position: fixed;
     width: 270px;
     height: 400px;
     background-color: white;
-    margin-top: -460px;
+    margin-top: -469px;
     margin-left: -207px;
     overflow-x: hidden;
     overflow-y: scroll;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid #aaa;
     z-index: -1;
 }
-.twitchEmotesShow {
+.popupShow {
     opacity: 1;
     z-index: 1;
 }
@@ -208,9 +209,27 @@ div.kpm-web {
 .emoticonHolder:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
-.emoticonHolder span {
-    color: black;
-}
+
 .selected {
     background-color: #B9A3E3;
+}
+
+.popupArrow {
+    opacity: 0;
+    z-index: -1;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 10px solid #aaa;
+}
+
+.emotePopupArrowShow {
+    margin-top: -68px;
+    margin-left: 2px;
+    opacity: 1;
+    z-index: 2;
 }

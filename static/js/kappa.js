@@ -26,7 +26,8 @@ $(function() {
     selectedEmote = $('.selected');
 
     $('.twitchSmile').on('click', function() {
-        $('.twitchEmotes').toggleClass('twitchEmotesShow');
+        $('.twitchEmotes').toggleClass('popupShow');
+        $('.emotePopup > .popupArrow').toggleClass('emotePopupArrowShow');
         //jquery cannot toggle class of SVG
         if (emotesOpen) {
             $('.twitchSmile').attr('class', 'twitchSmile');
