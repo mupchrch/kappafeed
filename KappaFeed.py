@@ -3,6 +3,7 @@ import IrcConnection
 import TwitchApi
 import server
 
+import json
 import os
 from threading import Thread
 
@@ -52,6 +53,13 @@ class KappaFeed(object):
                                 ircInstantiated = True
                             if irc.joinPartChannel('JOIN', chan):
                                 channelsJoined.append(chan)
+
+                    topChannelsToSend = []
+                    for eChan in eventChannelsJoined:
+                        topChannelsToSend.append({'channel'.decode('utf-8'): eChan.decode('utf-8')})
+                    for chan in channelsJoined:
+                        topChannelsToSend.append({'channel'.decode('utf-8'): chan.decode('utf-8')})
+                    server.setTopChannelsMsg({'topChannels'.decode('utf-8'): topChannelsToSend})
 
                     if ircInstantiated:
                         t1 = Thread(target=irc.channelScan, args=[globalEmotes.values(), 3600])

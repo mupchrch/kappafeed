@@ -41,6 +41,23 @@ html, body {
     margin: 16px;
 }
 
+.topChannels {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    opacity: 0;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
+    position: fixed;
+    width: 270px;
+    height: auto;
+    max-height: 60%;
+    background-color: #eee;
+    overflow: auto;
+    border: 1px solid #aaa;
+    bottom: 45px;
+    left: 8px;
+    z-index: -1;
+}
+
 .chat {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin: 0 auto;
@@ -177,6 +194,23 @@ div.kpm-web {
 .infoIcon:hover, .infoIconHover {
     fill: rgba(0, 0, 0, 0.5);
 }
+
+.topChannelsIcon {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    fill: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    position: absolute;
+    bottom: 8px;
+    left: 48px;
+    transition: fill 0.2s ease-in-out;
+    -webkit-transition: fill 0.2s ease-in-out;
+}
+.topChannelsIcon:hover, .topChannelsIconHover {
+    fill: rgba(0, 0, 0, 0.5);
+}
+
 .twitchSmile {
     fill: rgba(0, 0, 0, 0.2);
     cursor: pointer;
@@ -259,6 +293,13 @@ div.kpm-web {
 .infoPopupArrowShow {
     bottom: 36px;
     left: 8px;
+    opacity: 1;
+    z-index: 2;
+}
+
+.topChannelsPopupArrowShow {
+    bottom: 36px;
+    left: 40px;
     opacity: 1;
     z-index: 2;
 }

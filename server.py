@@ -12,6 +12,7 @@ define("port", default=80, help="run on the given port", type=int)
 
 clients = []
 servLogger = Logger.Logger('serv')
+topChannelsMsg = {}
 
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
@@ -23,10 +24,13 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
+        global topChannelsMsg
+
         servLogger.log('Client connect. Total: ' + str((len(clients)+1)))
         clients.append(self)
         self.emoteId = '25'
         self.stream.set_nodelay(True)
+        self.write_message(topChannelsMsg)
 
     def on_message(self, message):
         messageJSON = json.loads(message)
@@ -48,6 +52,10 @@ def sendToClients(message, messageEmotes):
         else:
             if client.emoteId in messageEmotes or messageEmotes == []:
                 client.write_message(encodedMsg)
+
+def setTopChannelsMsg(message):
+    global topChannelsMsg
+    topChannelsMsg = tornado.escape.json_encode(message)
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),

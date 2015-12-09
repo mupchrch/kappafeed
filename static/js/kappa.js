@@ -11,6 +11,7 @@ $(function() {
     var autoScrolling = false;
     var emotesOpen = false;
     var infoOpen = false;
+    var topChannelsOpen = false;
 
     $.getJSON("https://api.twitch.tv/kraken/chat/emoticon_images?emotesets=0", function(data) {
         var rawEmotes = data['emoticon_sets']['0'];
@@ -51,6 +52,34 @@ $(function() {
         } else {
             $('.infoIcon').attr('class', 'infoIcon infoIconHover');
             infoOpen = true;
+        }
+
+        if (topChannelsOpen) {
+            $('.topChannels').toggleClass('popupShow');
+            $('.topChannelsPopup > .popupArrow').toggleClass('topChannelsPopupArrowShow');
+            $('.topChannelsIcon').attr('class', 'topChannelsIcon');
+            topChannelsOpen = false;
+        }
+    });
+
+    $('.topChannelsIcon').on('click', function(e) {
+        e.stopPropagation();
+        $('.topChannels').toggleClass('popupShow');
+        $('.topChannelsPopup > .popupArrow').toggleClass('topChannelsPopupArrowShow');
+        //jquery cannot toggle class of SVG
+        if (topChannelsOpen) {
+            $('.topChannelsIcon').attr('class', 'topChannelsIcon');
+            topChannelsOpen = false;
+        } else {
+            $('.topChannelsIcon').attr('class', 'topChannelsIcon topChannelsIconHover');
+            topChannelsOpen = true;
+        }
+
+        if (infoOpen) {
+            $('.info').toggleClass('popupShow');
+            $('.infoPopup > .popupArrow').toggleClass('infoPopupArrowShow');
+            $('.infoIcon').attr('class', 'infoIcon');
+            infoOpen = false;
         }
     });
 
@@ -159,16 +188,22 @@ $(function() {
         ws.onmessage = function(evt) {
             msgCount++;
             var jsonMsg = JSON.parse(evt.data);
-            var parsedMsg = '';
 
             if (jsonMsg.channel) {
-                parsedMsg = parseKappaMsg(jsonMsg);
+                var parsedMsg = parseKappaMsg(jsonMsg);
+                printer.append(parsedMsg);
+                scrollBottom();
             } else if (jsonMsg.serverMsg) {
-                parsedMsg = '<div class="msgDiv"><div class="serverMsgDiv">' + jsonMsg.serverMsg + '</div></div>'
+                var serverMsg = '<div class="msgDiv"><div class="serverMsgDiv">' + jsonMsg.serverMsg + '</div></div>'
+                printer.append(serverMsg);
+                scrollBottom();
+            } else if (jsonMsg.topChannels) {
+                var topChannelsUl = $('.topChannels > ol');
+                topChannelsUl.empty();
+                for (var i = 0; i < jsonMsg.topChannels.length; i++) {
+                    topChannelsUl.append('<li>' + jsonMsg.topChannels[i].channel + '</li>');
+                }
             }
-
-            printer.append(parsedMsg);
-            scrollBottom();
         };
 
         ws.onclose = function() {
