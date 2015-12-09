@@ -96,6 +96,12 @@ $(function() {
             $('.infoIcon').attr('class', 'infoIcon');
             infoOpen = false;
         }
+        if (topChannelsOpen) {
+            $('.topChannels').toggleClass('popupShow');
+            $('.topChannelsPopup > .popupArrow').toggleClass('topChannelsPopupArrowShow');
+            $('.topChannelsIcon').attr('class', 'topChannelsIcon');
+            topChannelsOpen = false;
+        }
     });
 
     $('.scrollPopup').on('click', function() {
