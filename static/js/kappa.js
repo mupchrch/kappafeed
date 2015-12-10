@@ -161,9 +161,6 @@ $(function() {
         var ws = new WebSocket(wsPath);
 
         $(document).on('click', '.emoticonHolder', function(event) {
-            $('.twitchEmotes').css('opacity', 0);
-            emotesOpen = false;
-
             var nSelectedEmote = $(this);
             if (selectedEmote != nSelectedEmote) {
                 $('.selected').removeClass("selected");
@@ -174,6 +171,7 @@ $(function() {
                 selectedEmoteId = $(this).text()
 
                 printer.empty();
+                msgCount = 0;
                 printer.append('<div class="msgDiv"><div class="serverMsgDiv">searching for <img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + selectedEmoteId + '/1.0" /></div></div>');
 
                 ws.send(JSON.stringify({
