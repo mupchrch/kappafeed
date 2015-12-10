@@ -25,8 +25,7 @@ $(function() {
         }
     });
 
-    selectedEmote = $('.selected');
-
+    /******************************* LISTENERS *******************************/
     $('.twitchSmile').on('click', function(e) {
         e.stopPropagation();
         $('.twitchEmotes').toggleClass('popupShow');
@@ -83,6 +82,10 @@ $(function() {
         }
     });
 
+    $('.noDismiss').on('click', function(e) {
+        e.stopPropagation();
+    })
+
     $(window).on('click', function() {
         if (emotesOpen) {
             $('.twitchEmotes').toggleClass('popupShow');
@@ -124,6 +127,7 @@ $(function() {
             }
         }
     });
+    /***************************** END LISTENERS *****************************/
 
     var chat = $('.chat');
     var printer = $('.messages', chat);
@@ -148,6 +152,8 @@ $(function() {
             });
         }
     }
+
+    selectedEmote = $('.selected');
 
     //check for websocket support
     if ("WebSocket" in window) {
@@ -207,7 +213,8 @@ $(function() {
                 var topChannelsUl = $('.topChannels > ol');
                 topChannelsUl.empty();
                 for (var i = 0; i < jsonMsg.topChannels.length; i++) {
-                    topChannelsUl.append('<li>' + jsonMsg.topChannels[i].channel + '</li>');
+                    topChannelsUl.append('<li><a href="http://www.twitch.tv/' +
+                        jsonMsg.topChannels[i].channel + '" target="_blank">' + jsonMsg.topChannels[i].channel + '</a></li>');
                 }
             }
         };
