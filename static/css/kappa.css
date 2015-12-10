@@ -21,7 +21,6 @@ html, body {
 }
 
 .info {
-    /*color: #999;*/
     opacity: 0;
     -webkit-transition: opacity 0.2s ease-in-out;
     transition: opacity 0.2s ease-in-out;
@@ -76,9 +75,8 @@ html, body {
     border: 1px solid #aaa;
 }
 .chat-web {
-    width: 50%;/*600px;*/
+    width: 50%;
     top: 85px;
-    /*max-height: 750px;*/
 }
 .chat .messages {
     background: #eee;
@@ -91,8 +89,7 @@ html, body {
     border-bottom: 1px solid #999;
     display: table;
     width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    background-color: gray;
 }
 .emoticon {
     display: inline-block;
@@ -123,19 +120,21 @@ a.userLink:visited {
     text-decoration: none;
 }
 div.channelDiv {
-    width: 80px;
+    width: 55px;
     display: table-cell;
     vertical-align: middle;
-    padding-left: 15px;
+    padding: 0 15px;
+    background-color: #ddd;
 }
 div.userMsgDiv {
     display: table-cell;
-    padding-right: 15px;
+    padding: 10px 15px;
+    background-color: #eee;
 }
 div.serverMsgDiv {
     display: table-cell;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 10px 15px;
+    background-color: #eee;
 }
 span.channel {
     font-size: 10px;
